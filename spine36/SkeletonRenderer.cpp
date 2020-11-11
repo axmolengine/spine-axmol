@@ -480,10 +480,10 @@ namespace spine {
                             vertex->texCoords.u = uvs[vv];
                             vertex->texCoords.v = uvs[vv + 1];
                             _effect->transform(_effect, &vertex->vertices.x, &vertex->vertices.y, &vertex->texCoords.u, &vertex->texCoords.v, &lightCopy, &darkCopy);
-                            vertex->colors.r = (GLubyte)(lightCopy.r * 255);
-                            vertex->colors.g = (GLubyte)(lightCopy.g * 255);
-                            vertex->colors.b = (GLubyte)(lightCopy.b * 255);
-                            vertex->colors.a = (GLubyte)(lightCopy.a * 255);
+                            vertex->colors.r = (uint8_t)(lightCopy.r * 255);
+                            vertex->colors.g = (uint8_t)(lightCopy.g * 255);
+                            vertex->colors.b = (uint8_t)(lightCopy.b * 255);
+                            vertex->colors.a = (uint8_t)(lightCopy.a * 255);
                         }
                     }
                     else {
@@ -493,10 +493,10 @@ namespace spine {
                             vertex->vertices.y = verts[vv + 1];
                             vertex->texCoords.u = uvs[vv];
                             vertex->texCoords.v = uvs[vv + 1];
-                            vertex->colors.r = (GLubyte)color.r;
-                            vertex->colors.g = (GLubyte)color.g;
-                            vertex->colors.b = (GLubyte)color.b;
-                            vertex->colors.a = (GLubyte)color.a;
+                            vertex->colors.r = (uint8_t)color.r;
+                            vertex->colors.g = (uint8_t)color.g;
+                            vertex->colors.b = (uint8_t)color.b;
+                            vertex->colors.a = (uint8_t)color.a;
                         }
                     }
                 }
@@ -516,19 +516,19 @@ namespace spine {
                             spColor lightCopy = light;
                             spColor darkCopy = dark;
                             _effect->transform(_effect, &vertex->vertices.x, &vertex->vertices.y, &vertex->texCoords.u, &vertex->texCoords.v, &lightCopy, &darkCopy);
-                            vertex->colors.r = (GLubyte)(lightCopy.r * 255);
-                            vertex->colors.g = (GLubyte)(lightCopy.g * 255);
-                            vertex->colors.b = (GLubyte)(lightCopy.b * 255);
-                            vertex->colors.a = (GLubyte)(lightCopy.a * 255);
+                            vertex->colors.r = (uint8_t)(lightCopy.r * 255);
+                            vertex->colors.g = (uint8_t)(lightCopy.g * 255);
+                            vertex->colors.b = (uint8_t)(lightCopy.b * 255);
+                            vertex->colors.a = (uint8_t)(lightCopy.a * 255);
                         }
                     }
                     else {
                         for (int v = 0, vn = batchedTriangles->getTriangles().vertCount; v < vn; ++v) {
                             V3F_C4B_T2F* vertex = batchedTriangles->getTriangles().verts + v;
-                            vertex->colors.r = (GLubyte)color.r;
-                            vertex->colors.g = (GLubyte)color.g;
-                            vertex->colors.b = (GLubyte)color.b;
-                            vertex->colors.a = (GLubyte)color.a;
+                            vertex->colors.r = (uint8_t)color.r;
+                            vertex->colors.g = (uint8_t)color.g;
+                            vertex->colors.b = (uint8_t)color.b;
+                            vertex->colors.a = (uint8_t)color.a;
                         }
                     }
                 }
@@ -574,14 +574,14 @@ namespace spine {
                             vertex->texCoords.u = uvs[vv];
                             vertex->texCoords.v = uvs[vv + 1];
                             _effect->transform(_effect, &vertex->position.x, &vertex->position.y, &vertex->texCoords.u, &vertex->texCoords.v, &lightCopy, &darkCopy);
-                            vertex->color.r = (GLubyte)(lightCopy.r * 255);
-                            vertex->color.g = (GLubyte)(lightCopy.g * 255);
-                            vertex->color.b = (GLubyte)(lightCopy.b * 255);
-                            vertex->color.a = (GLubyte)(lightCopy.a * 255);
-                            vertex->color2.r = (GLubyte)(darkCopy.r * 255);
-                            vertex->color2.g = (GLubyte)(darkCopy.g * 255);
-                            vertex->color2.b = (GLubyte)(darkCopy.b * 255);
-                            vertex->color2.a = (GLubyte)darkColor.a;
+                            vertex->color.r = (uint8_t)(lightCopy.r * 255);
+                            vertex->color.g = (uint8_t)(lightCopy.g * 255);
+                            vertex->color.b = (uint8_t)(lightCopy.b * 255);
+                            vertex->color.a = (uint8_t)(lightCopy.a * 255);
+                            vertex->color2.r = (uint8_t)(darkCopy.r * 255);
+                            vertex->color2.g = (uint8_t)(darkCopy.g * 255);
+                            vertex->color2.b = (uint8_t)(darkCopy.b * 255);
+                            vertex->color2.a = (uint8_t)darkColor.a;
                         }
                     }
                     else {
@@ -591,14 +591,14 @@ namespace spine {
                             vertex->position.y = verts[vv + 1];
                             vertex->texCoords.u = uvs[vv];
                             vertex->texCoords.v = uvs[vv + 1];
-                            vertex->color.r = (GLubyte)color.r;
-                            vertex->color.g = (GLubyte)color.g;
-                            vertex->color.b = (GLubyte)color.b;
-                            vertex->color.a = (GLubyte)color.a;
-                            vertex->color2.r = (GLubyte)darkColor.r;
-                            vertex->color2.g = (GLubyte)darkColor.g;
-                            vertex->color2.b = (GLubyte)darkColor.b;
-                            vertex->color2.a = (GLubyte)darkColor.a;
+                            vertex->color.r = (uint8_t)color.r;
+                            vertex->color.g = (uint8_t)color.g;
+                            vertex->color.b = (uint8_t)color.b;
+                            vertex->color.a = (uint8_t)color.a;
+                            vertex->color2.r = (uint8_t)darkColor.r;
+                            vertex->color2.g = (uint8_t)darkColor.g;
+                            vertex->color2.b = (uint8_t)darkColor.b;
+                            vertex->color2.a = (uint8_t)darkColor.a;
                         }
                     }
                 }
@@ -622,27 +622,27 @@ namespace spine {
                             spColor lightCopy = light;
                             spColor darkCopy = dark;
                             _effect->transform(_effect, &vertex->position.x, &vertex->position.y, &vertex->texCoords.u, &vertex->texCoords.v, &lightCopy, &darkCopy);
-                            vertex->color.r = (GLubyte)(lightCopy.r * 255);
-                            vertex->color.g = (GLubyte)(lightCopy.g * 255);
-                            vertex->color.b = (GLubyte)(lightCopy.b * 255);
-                            vertex->color.a = (GLubyte)(lightCopy.a * 255);
-                            vertex->color2.r = (GLubyte)(darkCopy.r * 255);
-                            vertex->color2.g = (GLubyte)(darkCopy.g * 255);
-                            vertex->color2.b = (GLubyte)(darkCopy.b * 255);
-                            // vertex->color2.a = (GLubyte)darkColor.a;
+                            vertex->color.r = (uint8_t)(lightCopy.r * 255);
+                            vertex->color.g = (uint8_t)(lightCopy.g * 255);
+                            vertex->color.b = (uint8_t)(lightCopy.b * 255);
+                            vertex->color.a = (uint8_t)(lightCopy.a * 255);
+                            vertex->color2.r = (uint8_t)(darkCopy.r * 255);
+                            vertex->color2.g = (uint8_t)(darkCopy.g * 255);
+                            vertex->color2.b = (uint8_t)(darkCopy.b * 255);
+                            // vertex->color2.a = (uint8_t)darkColor.a;
                         }
                     }
                     else {
                         for (int v = 0, vn = batchedTriangles->getTriangles().vertCount; v < vn; ++v) {
                             V3F_C4B_C4B_T2F* vertex = batchedTriangles->getTriangles().verts + v;
-                            vertex->color.r = (GLubyte)color.r;
-                            vertex->color.g = (GLubyte)color.g;
-                            vertex->color.b = (GLubyte)color.b;
-                            vertex->color.a = (GLubyte)color.a;
-                            vertex->color2.r = (GLubyte)darkColor.r;
-                            vertex->color2.g = (GLubyte)darkColor.g;
-                            vertex->color2.b = (GLubyte)darkColor.b;
-                            vertex->color2.a = (GLubyte)darkColor.a;
+                            vertex->color.r = (uint8_t)color.r;
+                            vertex->color.g = (uint8_t)color.g;
+                            vertex->color.b = (uint8_t)color.b;
+                            vertex->color.a = (uint8_t)color.a;
+                            vertex->color2.r = (uint8_t)darkColor.r;
+                            vertex->color2.g = (uint8_t)darkColor.g;
+                            vertex->color2.b = (uint8_t)darkColor.b;
+                            vertex->color2.a = (uint8_t)darkColor.a;
                         }
                     }
                 }
