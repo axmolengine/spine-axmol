@@ -1,8 +1,8 @@
-# spine 3.6~3.8 for engine-x
+# spine 3.6~3.8 for adxe
 
 ## Usage
-1. Delete all files of folder ```engine-x/extensions/spine```
-2. Copy all files of specific folder(spine36,spine37,spine38) to ```engine-x/extensions/spine```
+1. Delete all files of folder ```adxe/extensions/spine```
+2. Copy all files of specific folder(spine36,spine37,spine38) to ```adxe/extensions/spine```
 
 ## Refer
-* engine-x: https://github.com/c4games/engine-x
+* adxe: https://github.com/adxeproject/adxe
