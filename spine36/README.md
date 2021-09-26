@@ -1,5 +1,4 @@
-# The spine-runtime for engine-x
-* version: 3.6
+# The spine-runtime for adxe
 * data parser: spine-c
 
 # Reference links
