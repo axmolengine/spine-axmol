@@ -1,5 +1,5 @@
 # The spine-runtime for adxe
-* version: 3.8
+* version: 4.0
 * based on spine-cpp
 
 # Reference links
