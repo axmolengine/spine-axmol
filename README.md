@@ -1,4 +1,4 @@
-# spine 3.6~3.8 for adxe
+# spine 3.6~4.0 for adxe
 
 ## Usage
 1. Delete all files of folder ```adxe/extensions/spine```
