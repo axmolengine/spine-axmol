@@ -36,30 +36,41 @@
 
 using namespace spine;
 
-RTTI::RTTI(const std::string &className) : _className(className), _pBaseRTTI(NULL) {
+static bool checkCompilerStringPooling() {
+	const char* l1 = "rtti";
+	const char* l2 = "rtti";
+	return l1 == l2;
 }
 
-RTTI::RTTI(const std::string &className, const RTTI &baseRTTI) : _className(className), _pBaseRTTI(&baseRTTI) {
+static bool addressEqual(const char* lhs, const char* rhs) {
+	return lhs == rhs;
+};
+
+static bool stringEqual(const char* lhs, const char* rhs) {
+	return !strcmp(lhs, rhs);
+};
+
+static auto classNameEqual = checkCompilerStringPooling() ? &addressEqual : &stringEqual;
+
+RTTI::RTTI(const char *className) : _className(className), _pBaseRTTI(NULL) {
 }
 
-const std::string &RTTI::getClassName() const {
+RTTI::RTTI(const char *className, const RTTI &baseRTTI) : _className(className), _pBaseRTTI(&baseRTTI) {
+}
+
+const char *RTTI::getClassName() const {
 	return _className;
 }
 
 bool RTTI::isExactly(const RTTI &rtti) const {
-	return (this->_className == rtti._className);
+	return classNameEqual(_className, rtti._className);
 }
 
 bool RTTI::instanceOf(const RTTI &rtti) const {
 	const RTTI *pCompare = this;
-
 	while (pCompare) {
-		if (pCompare->_className == rtti._className) {
-			return true;
-		}
-
+		if (pCompare->isExactly(rtti)) return true;
 		pCompare = pCompare->_pBaseRTTI;
 	}
-
 	return false;
 }
