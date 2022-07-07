@@ -1,4 +1,4 @@
-# spine 3.6~4.0 for adxe
+# spine 3.6~4.0 for axis
 
 ## Usage
 1. Delete all files of folder ```adxe/extensions/spine```
