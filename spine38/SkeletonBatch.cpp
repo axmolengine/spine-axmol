@@ -33,13 +33,14 @@
 #include <spine/Extension.h>
 #include <algorithm>
 
-USING_NS_CC;
+USING_NS_AX;
 #define EVENT_AFTER_DRAW_RESET_POSITION "director_after_draw"
 using std::max;
 #define INITIAL_SIZE (10000)
 
 #include "renderer/ccShaders.h"
 #include "renderer/backend/Device.h"
+#include "renderer/backend/Types.h"
 
 namespace spine {
 
@@ -86,7 +87,7 @@ SkeletonBatch::~SkeletonBatch () {
 backend::ProgramState* SkeletonBatch::updateCommandPipelinePS(SkeletonCommand* command, backend::ProgramState* programState)
 {
 	auto& currentState = command->getPipelineDescriptor().programState;
-#if defined(ADXE_VERSION)
+#if defined(AXIS_VERSION)
 	if(currentState == nullptr || currentState->getProgram() != programState->getProgram() || currentState->getUniformID() != programState->getUniformID()) {
 #else
 	if(currentState == nullptr || currentState->getProgram() != programState->getProgram()) {
@@ -95,17 +96,17 @@ backend::ProgramState* SkeletonBatch::updateCommandPipelinePS(SkeletonCommand* c
 		currentState = programState->clone();
 		
 		auto vertexLayout = currentState->getVertexLayout();
-		auto locPosition = currentState->getAttributeLocation("a_position");
-		auto locTexcoord = currentState->getAttributeLocation("a_texCoord");
-		auto locColor = currentState->getAttributeLocation("a_color");
-		vertexLayout->setAttribute("a_position", locPosition, backend::VertexFormat::FLOAT3, offsetof(V3F_C4B_T2F, vertices), false);
-		vertexLayout->setAttribute("a_color", locColor, backend::VertexFormat::UBYTE4, offsetof(V3F_C4B_T2F, colors), true);
-		vertexLayout->setAttribute("a_texCoord", locTexcoord, backend::VertexFormat::FLOAT2, offsetof(V3F_C4B_T2F, texCoords), false);
+        auto locPosition  = currentState->getAttributeLocation(backend::ATTRIBUTE_NAME_POSITION);
+        auto locTexcoord  = currentState->getAttributeLocation(backend::ATTRIBUTE_NAME_TEXCOORD);
+        auto locColor     = currentState->getAttributeLocation(backend::ATTRIBUTE_NAME_COLOR);
+		vertexLayout->setAttribute(backend::ATTRIBUTE_NAME_POSITION, locPosition, backend::VertexFormat::FLOAT3, offsetof(V3F_C4B_T2F, vertices), false);
+		vertexLayout->setAttribute(backend::ATTRIBUTE_NAME_COLOR, locColor, backend::VertexFormat::UBYTE4, offsetof(V3F_C4B_T2F, colors), true);
+		vertexLayout->setAttribute(backend::ATTRIBUTE_NAME_TEXCOORD, locTexcoord, backend::VertexFormat::FLOAT2, offsetof(V3F_C4B_T2F, texCoords), false);
 		vertexLayout->setLayout(sizeof(_vertices[0]));
 
 
-		command->_locMVP = currentState->getUniformLocation("u_MVPMatrix");
-		command->_locTexture = currentState->getUniformLocation("u_texture");
+		command->_locMVP     = currentState->getUniformLocation(backend::UNIFORM_NAME_MVP_MATRIX);
+        command->_locTexture = currentState->getUniformLocation(backend::UNIFORM_NAME_TEXTURE);
 	}
 	return currentState;
 }
@@ -114,11 +115,11 @@ void SkeletonBatch::update (float delta) {
 	reset();
 }
 
-cocos2d::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
+axis::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
 	if (_vertices.size() - _numVertices < numVertices) {
-		cocos2d::V3F_C4B_T2F* oldData = _vertices.data();
+		axis::V3F_C4B_T2F* oldData = _vertices.data();
 		_vertices.resize((_vertices.size() + numVertices) * 2 + 1);
-		cocos2d::V3F_C4B_T2F* newData = _vertices.data();
+		axis::V3F_C4B_T2F* newData = _vertices.data();
 		for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
 			SkeletonCommand* command = _commandsPool[i];
 			SkeletonCommand::Triangles& triangles = (SkeletonCommand::Triangles&)command->getTriangles();
@@ -126,7 +127,7 @@ cocos2d::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
 		}
 	}
 
-	cocos2d::V3F_C4B_T2F* vertices = _vertices.data() + _numVertices;
+	axis::V3F_C4B_T2F* vertices = _vertices.data() + _numVertices;
 	_numVertices += numVertices;
 	return vertices;
 }
@@ -161,9 +162,9 @@ void SkeletonBatch::deallocateIndices(uint32_t numIndices) {
 }
 
 
-cocos2d::TrianglesCommand* SkeletonBatch::addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, backend::ProgramState* programState, cocos2d::BlendFunc blendType, const cocos2d::TrianglesCommand::Triangles& triangles, const cocos2d::Mat4& mv, uint32_t flags) {
+axis::TrianglesCommand* SkeletonBatch::addCommand(axis::Renderer* renderer, float globalOrder, axis::Texture2D* texture, backend::ProgramState* programState, axis::BlendFunc blendType, const axis::TrianglesCommand::Triangles& triangles, const axis::Mat4& mv, uint32_t flags) {
 	SkeletonCommand* command = nextFreeCommand();
-    const cocos2d::Mat4& projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);    
+    const axis::Mat4& projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);    
 
 	if (programState == nullptr)
 		programState = _programState;
