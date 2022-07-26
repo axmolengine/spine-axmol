@@ -42,15 +42,19 @@ const char *RTTI::getClassName() const {
 	return _className;
 }
 
-bool RTTI::isExactly(const RTTI &rtti) const {
-	return !strcmp(this->_className, rtti._className);
+bool RTTI::isExactly(const RTTI& rtti) const
+{
+    return _className == rtti._className;
 }
 
-bool RTTI::instanceOf(const RTTI &rtti) const {
-	const RTTI *pCompare = this;
-	while (pCompare) {
-		if (!strcmp(pCompare->_className, rtti._className)) return true;
-		pCompare = pCompare->_pBaseRTTI;
-	}
-	return false;
+bool RTTI::instanceOf(const RTTI& rtti) const
+{
+    const RTTI* pCompare = this;
+    while (pCompare)
+    {
+        if (pCompare->_className == rtti._className)
+            return true;
+        pCompare = pCompare->_pBaseRTTI;
+    }
+    return false;
 }
