@@ -5,5 +5,5 @@
 2. Switch to branch `spinexx` then copy `spine-axmol/spine` to ```axmol/extensions/spine```
 
 ## References
-* axmol: https://github.com/axmol-project/axmol
+* axmol: https://github.com/axmolengine/axmol
 * spine-runtimes: https://github.com/EsotericSoftware/spine-runtimes
