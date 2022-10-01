@@ -2,7 +2,7 @@
 
 ## Usage
 1. Delete all files of folder ```axmol/extensions/spine```
-2. Switch to branch `spinexx` then copy `spine-axis/spine` to ```axis/extensions/spine```
+2. Switch to branch `spinexx` then copy `spine-axmol/spine` to ```axmol/extensions/spine```
 
 ## References
 * axmol: https://github.com/axmolengine/axmol
