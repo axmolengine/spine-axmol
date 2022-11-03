@@ -67,7 +67,7 @@ void RotateTimeline::apply(Skeleton &skeleton, float lastTime, float time, Vecto
 		}
 		case MixBlend_First: {
 			float r = bone->_data._rotation - bone->_rotation;
-			bone->_rotation += (r - (16384 - (int) (16384.499999999996 - r / 360)) * 360) * alpha;
+			bone->_rotation += r * alpha;
 			break;
 		}
 		default: {
@@ -87,7 +87,6 @@ void RotateTimeline::apply(Skeleton &skeleton, float lastTime, float time, Vecto
 			case MixBlend_First:
 			case MixBlend_Replace:
 				r += bone->_data._rotation - bone->_rotation;
-				r -= (16384 - (int)(16384.499999999996 - r / 360)) * 360;
 				// Fall through.
 			case MixBlend_Add:
 				bone->_rotation += r * alpha;
