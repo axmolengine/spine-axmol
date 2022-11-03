@@ -38,7 +38,7 @@ namespace spine {
     class AttachmentVertices;
 
     /* Draws a skeleton. */
-    class SP_API SkeletonRenderer : public cocos2d::Node, public cocos2d::BlendProtocol {
+    class SP_API SkeletonRenderer : public ax::Node, public ax::BlendProtocol {
     public:
         CREATE_FUNC(SkeletonRenderer);
         static SkeletonRenderer* createWithSkeleton(spSkeleton* skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false);
@@ -47,8 +47,8 @@ namespace spine {
         static SkeletonRenderer* createWithFile(const std::string& skeletonDataFile, const std::string& atlasFile, float scale = 1);
 
         virtual void update(float deltaTime) override;
-        virtual void draw(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t transformFlags) override;
-        virtual cocos2d::Rect getBoundingBox() const override;
+        virtual void draw(ax::Renderer* renderer, const ax::Mat4& transform, uint32_t transformFlags) override;
+        virtual ax::Rect getBoundingBox() const override;
         virtual void onEnter() override;
         virtual void onExit() override;
 
@@ -106,8 +106,8 @@ namespace spine {
         void setSlotsRange(int startSlotIndex, int endSlotIndex);
 
         // --- BlendProtocol
-        virtual void setBlendFunc(const cocos2d::BlendFunc& blendFunc)override;
-        virtual const cocos2d::BlendFunc& getBlendFunc() const override;
+        virtual void setBlendFunc(const ax::BlendFunc& blendFunc)override;
+        virtual const ax::BlendFunc& getBlendFunc() const override;
         virtual void setOpacityModifyRGB(bool value) override;
         virtual bool isOpacityModifyRGB() const override;
 
@@ -137,15 +137,15 @@ namespace spine {
         virtual AttachmentVertices* getAttachmentVertices(spRegionAttachment* attachment) const;
         virtual AttachmentVertices* getAttachmentVertices(spMeshAttachment* attachment) const;
         void setupGLProgramState(bool twoColorTintEnabled);
-        virtual void drawDebug(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t transformFlags);
+        virtual void drawDebug(ax::Renderer* renderer, const ax::Mat4& transform, uint32_t transformFlags);
 
         bool _ownsSkeletonData;
         bool _ownsSkeleton;
         bool _ownsAtlas = false;
         spAtlas* _atlas;
         spAttachmentLoader* _attachmentLoader;
-        cocos2d::CustomCommand _debugCommand;
-        cocos2d::BlendFunc _blendFunc;
+        ax::CustomCommand _debugCommand;
+        ax::BlendFunc _blendFunc;
         bool _premultipliedAlpha;
         spSkeleton* _skeleton;
         float _timeScale;
@@ -155,7 +155,7 @@ namespace spine {
         bool _debugBoundingRect;
         spSkeletonClipping* _clipper;
         spVertexEffect* _effect;
-        cocos2d::Rect _boundingRect;
+        ax::Rect _boundingRect;
 
         int _startSlotIndex;
         int _endSlotIndex;

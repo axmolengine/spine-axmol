@@ -42,7 +42,7 @@
 #define CC_USE_SPINE_CPP 0
 
 namespace spine {
-	typedef cocos2d::Texture2D* (*CustomTextureLoader)(const char* path);
+	typedef ax::Texture2D* (*CustomTextureLoader)(const char* path);
 	// set custom texture loader for _spAtlasPage_createTexture
 	void spAtlasPage_setCustomTextureLoader(CustomTextureLoader texLoader);
 }
