@@ -115,41 +115,7 @@ namespace spine {
         spSkeleton_updateWorldTransform(_skeleton);
     }
 
-    void SkeletonRenderer::setupGLProgramState(bool twoColorTintEnabled) {
-        if (twoColorTintEnabled) {
-#if COCOS2D_VERSION < 0x00040000
-            setGLProgramState(SkeletonTwoColorBatch::getInstance()->getTwoColorTintProgramState());
-#endif
-            return;
-        }
-
-        Texture2D* texture = nullptr;
-        for (int i = 0, n = _skeleton->slotsCount; i < n; i++) {
-            spSlot* slot = _skeleton->drawOrder[i];
-            if (!slot->attachment) continue;
-            switch (slot->attachment->type) {
-            case SP_ATTACHMENT_REGION: {
-                spRegionAttachment* attachment = (spRegionAttachment*)slot->attachment;
-                texture = static_cast<AttachmentVertices*>(attachment->rendererObject)->_texture;
-                break;
-            }
-            case SP_ATTACHMENT_MESH: {
-                spMeshAttachment* attachment = (spMeshAttachment*)slot->attachment;
-                texture = static_cast<AttachmentVertices*>(attachment->rendererObject)->_texture;
-                break;
-            }
-            default:
-                continue;
-            }
-
-            if (texture != nullptr) {
-                break;
-            }
-        }
-#if COCOS2D_VERSION < 0x00040000
-        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP, texture));
-#endif
-    }
+    void SkeletonRenderer::setupGLProgramState(bool /*twoColorTintEnabled*/) {}
 
     void SkeletonRenderer::setSkeletonData(spSkeletonData* skeletonData, bool ownsSkeletonData) {
         _skeleton = spSkeleton_create(skeletonData);
