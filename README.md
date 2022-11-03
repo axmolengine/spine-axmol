@@ -1,4 +1,4 @@
-# spine 3.6~4.1 for axis
+# spine 3.6~4.1 for axmol
 
 ## Usage
 1. Delete all files of folder ```axmol/extensions/spine```
