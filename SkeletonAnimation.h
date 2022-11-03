@@ -69,7 +69,7 @@ public:
 	}
 
 	virtual void update (float deltaTime) override;
-	virtual void draw (cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t transformFlags) override;
+	virtual void draw (ax::Renderer* renderer, const ax::Mat4& transform, uint32_t transformFlags) override;
 
 	void setAnimationStateData (AnimationStateData* stateData);
 	void setMix (const std::string& fromAnimation, const std::string& toAnimation, float duration);

@@ -85,7 +85,7 @@ SkeletonBatch::~SkeletonBatch () {
 	CC_SAFE_RELEASE(_programState);
 }
 
-void SkeletonBatch::updateProgramStateLayout(cocos2d::backend::ProgramState* programState)
+void SkeletonBatch::updateProgramStateLayout(ax::backend::ProgramState* programState)
 {
 	auto vertexLayout = programState->getVertexLayout();
 
@@ -106,19 +106,19 @@ void SkeletonBatch::update (float delta) {
 	reset();
 }
 
-cocos2d::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
+ax::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
 	if (_vertices.size() - _numVertices < numVertices) {
-		cocos2d::V3F_C4B_T2F* oldData = _vertices.data();
+		ax::V3F_C4B_T2F* oldData = _vertices.data();
 		_vertices.resize((_vertices.size() + numVertices) * 2 + 1);
-		cocos2d::V3F_C4B_T2F* newData = _vertices.data();
+		ax::V3F_C4B_T2F* newData = _vertices.data();
 		for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
 			TrianglesCommand* command = _commandsPool[i];
-			cocos2d::TrianglesCommand::Triangles& triangles = (cocos2d::TrianglesCommand::Triangles&)command->getTriangles();
+			ax::TrianglesCommand::Triangles& triangles = (ax::TrianglesCommand::Triangles&)command->getTriangles();
 			triangles.verts = newData + (triangles.verts - oldData);
 		}
 	}
 
-	cocos2d::V3F_C4B_T2F* vertices = _vertices.data() + _numVertices;
+	ax::V3F_C4B_T2F* vertices = _vertices.data() + _numVertices;
 	_numVertices += numVertices;
 	return vertices;
 }
@@ -136,7 +136,7 @@ unsigned short* SkeletonBatch::allocateIndices(uint32_t numIndices) {
 		unsigned short* newData = _indices.buffer();
 		for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
 			TrianglesCommand* command = _commandsPool[i];
-			cocos2d::TrianglesCommand::Triangles& triangles = (cocos2d::TrianglesCommand::Triangles&)command->getTriangles();
+			ax::TrianglesCommand::Triangles& triangles = (ax::TrianglesCommand::Triangles&)command->getTriangles();
 			if (triangles.indices >= oldData && triangles.indices < oldData + oldSize) {
 				triangles.indices = newData + (triangles.indices - oldData);
 			}
@@ -153,9 +153,9 @@ void SkeletonBatch::deallocateIndices(uint32_t numIndices) {
 }
 
 
-cocos2d::TrianglesCommand* SkeletonBatch::addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, backend::ProgramState* programState, cocos2d::BlendFunc blendType, const cocos2d::TrianglesCommand::Triangles& triangles, const cocos2d::Mat4& mv, uint32_t flags) {
+ax::TrianglesCommand* SkeletonBatch::addCommand(ax::Renderer* renderer, float globalOrder, ax::Texture2D* texture, backend::ProgramState* programState, ax::BlendFunc blendType, const ax::TrianglesCommand::Triangles& triangles, const ax::Mat4& mv, uint32_t flags) {
 	TrianglesCommand* command = nextFreeCommand();
-    const cocos2d::Mat4& projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);    
+    const ax::Mat4& projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);    
 
 	if (programState == nullptr)
 		programState = _programState;
@@ -184,7 +184,7 @@ void SkeletonBatch::reset() {
 	_indices.setSize(0, 0);
 }
 
-cocos2d::TrianglesCommand* SkeletonBatch::nextFreeCommand() {
+ax::TrianglesCommand* SkeletonBatch::nextFreeCommand() {
     if (_commandsPool.size() <= _nextFreeCommand) {
         unsigned int newSize = _commandsPool.size() * 2 + 1;
         for (int i = _commandsPool.size(); i < newSize; i++) {
@@ -195,7 +195,7 @@ cocos2d::TrianglesCommand* SkeletonBatch::nextFreeCommand() {
     return command;
 }
 
-cocos2d::TrianglesCommand *SkeletonBatch::createNewTrianglesCommand() {
+ax::TrianglesCommand *SkeletonBatch::createNewTrianglesCommand() {
     auto* command = new TrianglesCommand();
     return command;
 }

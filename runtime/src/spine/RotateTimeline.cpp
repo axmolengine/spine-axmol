@@ -103,7 +103,7 @@ void RotateTimeline::apply(Skeleton &skeleton, float lastTime, float time, Vecto
 	r = prevRotation + (r - (16384 - (int)(16384.499999999996 - r / 360)) * 360) * percent;
 	switch (blend) {
 		case MixBlend_Setup:
-			bone->_rotation = bone->_data._rotation + (r - (16384 - (int)(16384.499999999996 - r / 360)) * 360) * alpha;
+			bone->_rotation = bone->_data._rotation + r * alpha;
 			break;
 		case MixBlend_First:
 		case MixBlend_Replace:
