@@ -114,11 +114,11 @@ void SkeletonBatch::update (float delta) {
 	reset();
 }
 
-cocos2d::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
+ax::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
 	if (_vertices.size() - _numVertices < numVertices) {
-		cocos2d::V3F_C4B_T2F* oldData = _vertices.data();
+		ax::V3F_C4B_T2F* oldData = _vertices.data();
 		_vertices.resize((_vertices.size() + numVertices) * 2 + 1);
-		cocos2d::V3F_C4B_T2F* newData = _vertices.data();
+		ax::V3F_C4B_T2F* newData = _vertices.data();
 		for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
 			SkeletonCommand* command = _commandsPool[i];
 			SkeletonCommand::Triangles& triangles = (SkeletonCommand::Triangles&)command->getTriangles();
@@ -126,7 +126,7 @@ cocos2d::V3F_C4B_T2F* SkeletonBatch::allocateVertices(uint32_t numVertices) {
 		}
 	}
 
-	cocos2d::V3F_C4B_T2F* vertices = _vertices.data() + _numVertices;
+	ax::V3F_C4B_T2F* vertices = _vertices.data() + _numVertices;
 	_numVertices += numVertices;
 	return vertices;
 }
@@ -161,9 +161,9 @@ void SkeletonBatch::deallocateIndices(uint32_t numIndices) {
 }
 
 
-cocos2d::TrianglesCommand* SkeletonBatch::addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, backend::ProgramState* programState, cocos2d::BlendFunc blendType, const cocos2d::TrianglesCommand::Triangles& triangles, const cocos2d::Mat4& mv, uint32_t flags) {
+ax::TrianglesCommand* SkeletonBatch::addCommand(ax::Renderer* renderer, float globalOrder, ax::Texture2D* texture, backend::ProgramState* programState, ax::BlendFunc blendType, const ax::TrianglesCommand::Triangles& triangles, const ax::Mat4& mv, uint32_t flags) {
 	SkeletonCommand* command = nextFreeCommand();
-    const cocos2d::Mat4& projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);    
+    const ax::Mat4& projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);    
 
 	if (programState == nullptr)
 		programState = _programState;

@@ -142,7 +142,7 @@ namespace spine {
 		if (_postUpdateListener) _postUpdateListener(this);
 	}
 
-	void SkeletonAnimation::draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t transformFlags) {
+	void SkeletonAnimation::draw(ax::Renderer *renderer, const ax::Mat4 &transform, uint32_t transformFlags) {
 		if (_firstDraw) {
 			_firstDraw = false;
 			update(0);

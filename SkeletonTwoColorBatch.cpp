@@ -136,10 +136,10 @@ namespace spine {
 		_type = RenderCommand::Type::CUSTOM_COMMAND;
 	}
 
-	void TwoColorTrianglesCommand::init(float globalOrder, cocos2d::Texture2D *texture, cocos2d::backend::ProgramState *programState, BlendFunc blendType, const TwoColorTriangles &triangles, const Mat4 &mv, uint32_t flags) {
+	void TwoColorTrianglesCommand::init(float globalOrder, ax::Texture2D *texture, ax::backend::ProgramState *programState, BlendFunc blendType, const TwoColorTriangles &triangles, const Mat4 &mv, uint32_t flags) {
 
 		updateCommandPipelineDescriptor(programState);
-		const cocos2d::Mat4 &projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+		const ax::Mat4 &projectionMat = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
 
 		auto finalMatrix = projectionMat * mv;
 
@@ -175,7 +175,7 @@ namespace spine {
 	}
 
 
-	void TwoColorTrianglesCommand::updateCommandPipelineDescriptor(cocos2d::backend::ProgramState *programState) {
+	void TwoColorTrianglesCommand::updateCommandPipelineDescriptor(ax::backend::ProgramState *programState) {
 		// OPTIMIZE ME: all commands belong a same Node should share a same programState like SkeletonBatch
 		if (!__twoColorProgramState) {
 			initTwoColorProgramState();
@@ -342,7 +342,7 @@ namespace spine {
 		_indices.setSize(_indices.size() - numIndices, 0);
 	}
 
-	TwoColorTrianglesCommand *SkeletonTwoColorBatch::addCommand(cocos2d::Renderer *renderer, float globalOrder, cocos2d::Texture2D *texture, backend::ProgramState *programState, cocos2d::BlendFunc blendType, const TwoColorTriangles &triangles, const cocos2d::Mat4 &mv, uint32_t flags) {
+	TwoColorTrianglesCommand *SkeletonTwoColorBatch::addCommand(ax::Renderer *renderer, float globalOrder, ax::Texture2D *texture, backend::ProgramState *programState, ax::BlendFunc blendType, const TwoColorTriangles &triangles, const ax::Mat4 &mv, uint32_t flags) {
 		TwoColorTrianglesCommand *command = nextFreeCommand();
 		command->init(globalOrder, texture, programState, blendType, triangles, mv, flags);
 		command->updateVertexAndIndexBuffer(renderer, triangles.verts, triangles.vertCount, triangles.indices, triangles.indexCount);
@@ -350,7 +350,7 @@ namespace spine {
 		return command;
 	}
 
-	void SkeletonTwoColorBatch::batch(cocos2d::Renderer *renderer, TwoColorTrianglesCommand *command) {
+	void SkeletonTwoColorBatch::batch(ax::Renderer *renderer, TwoColorTrianglesCommand *command) {
 		if (_numVerticesBuffer + command->getTriangles().vertCount >= MAX_VERTICES || _numIndicesBuffer + command->getTriangles().indexCount >= MAX_INDICES) {
 			flush(renderer, _lastCommand);
 		}
@@ -381,7 +381,7 @@ namespace spine {
 		_lastCommand = command;
 	}
 
-	void SkeletonTwoColorBatch::flush(cocos2d::Renderer *renderer, TwoColorTrianglesCommand *materialCommand) {
+	void SkeletonTwoColorBatch::flush(ax::Renderer *renderer, TwoColorTrianglesCommand *materialCommand) {
 		if (!materialCommand)
 			return;
 
