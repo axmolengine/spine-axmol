@@ -38,54 +38,52 @@
 #include <vector>
 
 namespace spine {
-    
 	struct SkeletonCommand : public cocos2d::TrianglesCommand {
 		cocos2d::backend::UniformLocation _locMVP;
 		cocos2d::backend::UniformLocation _locTexture;
 	};
-	
-    class SP_API SkeletonBatch {
-    public:
-        static SkeletonBatch* getInstance ();
-        
-        static void destroyInstance ();
-        
-        void update (float delta);
-		
-		cocos2d::V3F_C4B_T2F* allocateVertices(uint32_t numVertices);
+	class SP_API SkeletonBatch {
+	public:
+		static SkeletonBatch *getInstance();
+
+		static void destroyInstance();
+
+		void update(float delta);
+
+		cocos2d::V3F_C4B_T2F *allocateVertices(uint32_t numVertices);
 		void deallocateVertices(uint32_t numVertices);
-		unsigned short* allocateIndices(uint32_t numIndices);
+		unsigned short *allocateIndices(uint32_t numIndices);
 		void deallocateIndices(uint32_t numVertices);
-		cocos2d::TrianglesCommand* addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, cocos2d::backend::ProgramState* programState, cocos2d::BlendFunc blendType, const cocos2d::TrianglesCommand::Triangles& triangles, const cocos2d::Mat4& mv, uint32_t flags);
-        
+		cocos2d::TrianglesCommand *addCommand(cocos2d::Renderer *renderer, float globalOrder, cocos2d::Texture2D *texture, cocos2d::backend::ProgramState *programState, cocos2d::BlendFunc blendType, const cocos2d::TrianglesCommand::Triangles &triangles, const cocos2d::Mat4 &mv, uint32_t flags);
+
 		cocos2d::backend::ProgramState* updateCommandPipelinePS(SkeletonCommand* command, cocos2d::backend::ProgramState* programState);
 
-    protected:
-		SkeletonBatch ();
-		virtual ~SkeletonBatch ();
-		
-		void reset ();
-		
+	protected:
+		SkeletonBatch();
+		virtual ~SkeletonBatch();
+
+		void reset();
+
 		SkeletonCommand* nextFreeCommand ();
 
 		SkeletonCommand* newCommand();
-	
-		cocos2d::backend::ProgramState*                     _programState; // The default program state
+
+		ax::backend::ProgramState*                     _programState; // The default program state
 
 		// pool of commands
-		std::vector<SkeletonCommand*>                       _commandsPool;
-		uint32_t                                            _nextFreeCommand;
-		
+		std::vector<SkeletonCommand *> _commandsPool;
+		uint32_t _nextFreeCommand;
+
 		// pool of vertices
-		std::vector<cocos2d::V3F_C4B_T2F>                   _vertices;
-		uint32_t                                            _numVertices;
-		
+		std::vector<cocos2d::V3F_C4B_T2F> _vertices;
+		uint32_t _numVertices;
+
 		// pool of indices
-		Vector<unsigned short>                              _indices;
-    };
-	
-}
+		Vector<unsigned short> _indices;
+	};
+
+}// namespace spine
 
 #endif
 
-#endif // SPINE_SKELETONBATCH_H_
+#endif// SPINE_SKELETONBATCH_H_

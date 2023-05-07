@@ -35,10 +35,8 @@
 
 namespace spine {
 
-	class AttachmentVertices;
-
 	/* Draws a skeleton. */
-	class SP_API SkeletonRenderer: public cocos2d::Node, public cocos2d::BlendProtocol {
+	class SP_API SkeletonRenderer : public cocos2d::Node, public cocos2d::BlendProtocol {
 	public:
 		CREATE_FUNC(SkeletonRenderer);
 		static SkeletonRenderer *createWithSkeleton(Skeleton *skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false);

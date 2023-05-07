@@ -48,7 +48,7 @@ namespace spine {
 
 	/** Draws an animated skeleton, providing an AnimationState for applying one or more animations and queuing animations to be
   * played later. */
-class SP_API SkeletonAnimation: public SkeletonRenderer {
+	class SP_API SkeletonAnimation : public SkeletonRenderer {
 	public:
 		CREATE_FUNC(SkeletonAnimation);
 		static SkeletonAnimation *createWithData(SkeletonData *skeletonData, bool ownsSkeletonData = false);

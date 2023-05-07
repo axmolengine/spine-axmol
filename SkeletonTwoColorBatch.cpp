@@ -101,19 +101,17 @@ namespace {
 		__locPMatrix = programState->getUniformLocation("u_PMatrix");
 		__locTexture = programState->getUniformLocation("u_texture");
 
-		auto layout = programState->getVertexLayout();
+        auto locPosition = programState->getAttributeLocation("a_position");
+        auto locTexcoord = programState->getAttributeLocation("a_texCoords");
+        auto locColor = programState->getAttributeLocation("a_color");
+        auto locColor2 = programState->getAttributeLocation("a_color2");
 
-		auto locPosition = programState->getAttributeLocation("a_position");
-		auto locTexcoord = programState->getAttributeLocation("a_texCoords");
-		auto locColor = programState->getAttributeLocation("a_color");
-		auto locColor2 = programState->getAttributeLocation("a_color2");
-
-		layout->setAttribute("a_position", locPosition, backend::VertexFormat::FLOAT3, offsetof(spine::V3F_C4B_C4B_T2F, position), false);
-		layout->setAttribute("a_color", locColor, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color), true);
-		layout->setAttribute("a_color2", locColor2, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color2), true);
-		layout->setAttribute("a_texCoords", locTexcoord, backend::VertexFormat::FLOAT2, offsetof(spine::V3F_C4B_C4B_T2F, texCoords), false);
-		layout->setLayout(sizeof(spine::V3F_C4B_C4B_T2F));
-	}
+        programState->setVertexAttrib("a_position", locPosition, backend::VertexFormat::FLOAT3, offsetof(spine::V3F_C4B_C4B_T2F, position), false);
+        programState->setVertexAttrib("a_color", locColor, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color), true);
+        programState->setVertexAttrib("a_color2", locColor2, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color2), true);
+        programState->setVertexAttrib("a_texCoords", locTexcoord, backend::VertexFormat::FLOAT2, offsetof(spine::V3F_C4B_C4B_T2F, texCoords), false);
+        programState->setVertexStride(sizeof(spine::V3F_C4B_C4B_T2F));
+    }
 
 	static void initTwoColorProgramState() {
 		if (__twoColorProgramState) {
@@ -321,7 +319,7 @@ namespace spine {
 	unsigned short *SkeletonTwoColorBatch::allocateIndices(uint32_t numIndices) {
 		if (_indices.getCapacity() - _indices.size() < numIndices) {
 			unsigned short *oldData = _indices.buffer();
-			int oldSize = _indices.size();
+			int oldSize = (int)_indices.size();
 			_indices.ensureCapacity(_indices.size() + numIndices);
 			unsigned short *newData = _indices.buffer();
 			for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
@@ -406,8 +404,8 @@ namespace spine {
 
 	TwoColorTrianglesCommand *SkeletonTwoColorBatch::nextFreeCommand() {
 		if (_commandsPool.size() <= _nextFreeCommand) {
-			unsigned int newSize = _commandsPool.size() * 2 + 1;
-			for (int i = _commandsPool.size(); i < newSize; i++) {
+			unsigned int newSize = (int)_commandsPool.size() * 2 + 1;
+			for (int i = (int)_commandsPool.size(); i < newSize; i++) {
 				_commandsPool.push_back(new TwoColorTrianglesCommand());
 			}
 		}

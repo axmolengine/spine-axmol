@@ -40,14 +40,14 @@
 #include <spine/SkeletonAnimation.h>
 
 namespace spine {
-	class SP_API Cocos2dAtlasAttachmentLoader: public AtlasAttachmentLoader {
+	class SP_API Cocos2dAtlasAttachmentLoader : public AtlasAttachmentLoader {
 	public:
 		Cocos2dAtlasAttachmentLoader(Atlas *atlas);
 		virtual ~Cocos2dAtlasAttachmentLoader();
 		virtual void configureAttachment(Attachment *attachment);
 	};
 
-	class SP_API Cocos2dTextureLoader: public TextureLoader {
+	class SP_API Cocos2dTextureLoader : public TextureLoader {
 	public:
 		Cocos2dTextureLoader();
 
@@ -58,7 +58,7 @@ namespace spine {
 		virtual void unload(void *texture);
 	};
 
-	class SP_API Cocos2dExtension: public DefaultSpineExtension {
+	class SP_API Cocos2dExtension : public DefaultSpineExtension {
 	public:
 		Cocos2dExtension();
 
