@@ -92,10 +92,10 @@ void SkeletonBatch::updateProgramStateLayout(ax::backend::ProgramState* programS
 	auto locPosition = programState->getAttributeLocation(backend::ATTRIBUTE_NAME_POSITION);
 	auto locTexcoord = programState->getAttributeLocation(backend::ATTRIBUTE_NAME_TEXCOORD);
 	auto locColor = programState->getAttributeLocation(backend::ATTRIBUTE_NAME_COLOR);
-	vertexLayout->setAttribute(backend::ATTRIBUTE_NAME_POSITION, locPosition, backend::VertexFormat::FLOAT3, offsetof(V3F_C4B_T2F, vertices), false);
-	vertexLayout->setAttribute(backend::ATTRIBUTE_NAME_COLOR, locColor, backend::VertexFormat::UBYTE4, offsetof(V3F_C4B_T2F, colors), true);
-	vertexLayout->setAttribute(backend::ATTRIBUTE_NAME_TEXCOORD, locTexcoord, backend::VertexFormat::FLOAT2, offsetof(V3F_C4B_T2F, texCoords), false);
-	vertexLayout->setLayout(sizeof(_vertices[0]));
+	programState->setVertexAttrib(backend::ATTRIBUTE_NAME_POSITION, locPosition, backend::VertexFormat::FLOAT3, offsetof(V3F_C4B_T2F, vertices), false);
+	programState->setVertexAttrib(backend::ATTRIBUTE_NAME_COLOR, locColor, backend::VertexFormat::UBYTE4, offsetof(V3F_C4B_T2F, colors), true);
+	programState->setVertexAttrib(backend::ATTRIBUTE_NAME_TEXCOORD, locTexcoord, backend::VertexFormat::FLOAT2, offsetof(V3F_C4B_T2F, texCoords), false);
+	programState->setVertexStride(sizeof(_vertices[0]));
 
 
 	_locMVP = programState->getUniformLocation(backend::UNIFORM_NAME_MVP_MATRIX);
