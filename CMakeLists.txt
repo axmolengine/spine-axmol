@@ -21,4 +21,4 @@ endif()
 
 target_include_directories(${target_name} PUBLIC "runtime/include")
 
-setup_cocos_extension_config(${target_name})
+setup_ax_extension_config(${target_name})
