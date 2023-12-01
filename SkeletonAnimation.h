@@ -32,7 +32,7 @@
 
 #include <spine/spine.h>
 #include <spine/spine-cocos2dx.h>
-#include "cocos2d.h"
+#include "axmol.h"
 
 namespace spine {
 

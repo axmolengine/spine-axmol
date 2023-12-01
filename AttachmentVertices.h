@@ -30,7 +30,7 @@
 #ifndef SPINE_ATTACHMENTVERTICES_H_
 #define SPINE_ATTACHMENTVERTICES_H_
 
-#include "cocos2d.h"
+#include "axmol.h"
 
 #include <spine/spine.h>
 

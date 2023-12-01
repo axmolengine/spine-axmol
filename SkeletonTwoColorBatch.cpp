@@ -33,12 +33,24 @@
 #include <spine/Extension.h>
 #include <algorithm>
 #include <stddef.h> // offsetof
+#if AX_VERSION >= 0X00020000
+#include "base/Types.h"
+#include "base/Utils.h"
+
+#include "xxhash.h"
+#include "renderer/Shaders.h"
+#include "renderer/backend/Device.h"
+#else
 #include "base/ccTypes.h"
 #include "base/ccUtils.h"
 
 #include "xxhash.h"
 #include "renderer/ccShaders.h"
 #include "renderer/backend/Device.h"
+#endif
+
+
+
 
 USING_NS_AX;
 #define EVENT_AFTER_DRAW_RESET_POSITION "director_after_draw"
@@ -51,6 +63,7 @@ using std::max;
 
 namespace {
 
+#if AX_VERSION < 0X00020000
     const char* TWO_COLOR_TINT_VERTEX_SHADER = STRINGIFY(
     uniform mat4 u_PMatrix;
     attribute vec4 a_position;
@@ -93,6 +106,7 @@ namespace {
         gl_FragColor.rgb = ((texColor.a - 1.0) * v_dark.a + 1.0 - texColor.rgb) * v_dark.rgb + texColor.rgb * v_light.rgb;
     }
     );
+#endif
 
 
     std::shared_ptr<backend::ProgramState>  __twoColorProgramState = nullptr;
@@ -121,10 +135,15 @@ namespace {
         {
             return;
         }
+#if AX_VERSION < 0X00020000
         auto program = backend::Device::getInstance()->newProgram(TWO_COLOR_TINT_VERTEX_SHADER, TWO_COLOR_TINT_FRAGMENT_SHADER);
         auto* programState = new backend::ProgramState(program);
         program->release();
-
+#else
+        auto program = ProgramManager::getInstance()->loadProgram("custom/spineTwoColorTint_vs",
+            "custom/spineTwoColorTint_fs");
+        auto* programState = new backend::ProgramState(program);
+#endif
         updateProgramStateLayout(programState);
 
         __twoColorProgramState = std::shared_ptr<backend::ProgramState>(programState);
