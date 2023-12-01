@@ -38,9 +38,14 @@ USING_NS_AX;
 using std::max;
 #define INITIAL_SIZE (10000)
 
-#include "renderer/ccShaders.h"
+#if AX_VERSION >= 0X00020000
+#include "renderer/Shaders.h"
 #include "renderer/backend/Device.h"
 #include "renderer/backend/Types.h"
+#else
+#include "renderer/ccShaders.h"
+#include "renderer/backend/Device.h"
+#endif
 
 namespace spine {
 
@@ -88,7 +93,15 @@ backend::ProgramState* SkeletonBatch::updateCommandPipelinePS(SkeletonCommand* c
 {
 	auto& currentState = command->getPipelineDescriptor().programState;
 #if defined(AX_VERSION)
-	if(currentState == nullptr || currentState->getProgram() != programState->getProgram() || currentState->getUniformID() != programState->getUniformID()) {
+	if (currentState == nullptr 
+#if AX_VERSION >= 0X00020000
+		|| currentState->getBatchId() != programState->getBatchId()
+#else
+		|| currentState->getProgram() != programState->getProgram() || currentState->getUniformID() != programState->getUniformID()
+#endif
+)
+	{
+
 #else
 	if(currentState == nullptr || currentState->getProgram() != programState->getProgram()) {
 #endif

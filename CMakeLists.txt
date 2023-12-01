@@ -21,4 +21,10 @@ endif()
 
 target_include_directories(${target_name} PUBLIC "runtime/include")
 
+get_target_property(AX_VERSION ${_AX_CORE_LIB} VERSION)
+if (AX_VERSION VERSION_GREATER_EQUAL 2.0)
+    ax_find_shaders(${CMAKE_CURRENT_LIST_DIR}/shaders SPINE_SHADER_SOURCES)
+    ax_target_compile_shaders(${target_name} FILES ${SPINE_SHADER_SOURCES} CUSTOM)    
+endif()
+
 setup_ax_extension_config(${target_name})
