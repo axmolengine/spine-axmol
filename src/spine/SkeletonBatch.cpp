@@ -27,19 +27,19 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include <spine/spine-cocos2dx.h>
-#if COCOS2D_VERSION >= 0x00040000
+#include <spine/spine-axmol.h>
 
 #include <algorithm>
 #include <spine/Extension.h>
 
-USING_NS_CC;
+USING_NS_AX;
 #define EVENT_AFTER_DRAW_RESET_POSITION "director_after_draw"
 using std::max;
 #define INITIAL_SIZE (10000)
 
-#include "renderer/backend/Device.h"
-#include "renderer/ccShaders.h"
+#include "renderer/Shaders.h"
+#include "renderer/backend/DriverBase.h"
+#include "renderer/backend/Types.h"
 
 namespace spine {
 
@@ -76,36 +76,34 @@ SkeletonBatch::~SkeletonBatch () {
 	Director::getInstance()->getEventDispatcher()->removeCustomEventListeners(EVENT_AFTER_DRAW_RESET_POSITION);
 
 	for (unsigned int i = 0; i < _commandsPool.size(); i++) {
-        CC_SAFE_RELEASE(_commandsPool[i]->getPipelineDescriptor().programState);
+        AX_SAFE_RELEASE(_commandsPool[i]->getPipelineDescriptor().programState);
 		delete _commandsPool[i];
 		_commandsPool[i] = nullptr;
 	}
-	CC_SAFE_RELEASE(_programState);
+	AX_SAFE_RELEASE(_programState);
 }
 
 backend::ProgramState* SkeletonBatch::updateCommandPipelinePS(SkeletonCommand* command, backend::ProgramState* programState)
 {
 	auto& currentState = command->getPipelineDescriptor().programState;
-#if defined(ADXE_VERSION)
-	if(currentState == nullptr || currentState->getProgram() != programState->getProgram() || currentState->getUniformID() != programState->getUniformID()) {
+#if defined(AX_VERSION)
+	if (currentState == nullptr 
+#if AX_VERSION >= 0X00020000
+		|| currentState->getBatchId() != programState->getBatchId()
+#else
+		|| currentState->getProgram() != programState->getProgram() || currentState->getUniformID() != programState->getUniformID()
+#endif
+)
+	{
+
 #else
 	if(currentState == nullptr || currentState->getProgram() != programState->getProgram()) {
 #endif
-		CC_SAFE_RELEASE(currentState);
+		AX_SAFE_RELEASE(currentState);
 		currentState = programState->clone();
 		
-		auto vertexLayout = currentState->getVertexLayout();
-		auto locPosition = currentState->getAttributeLocation(backend::ATTRIBUTE_NAME_POSITION);
-		auto locTexcoord = currentState->getAttributeLocation(backend::ATTRIBUTE_NAME_TEXCOORD);
-		auto locColor = currentState->getAttributeLocation(backend::ATTRIBUTE_NAME_COLOR);
-		currentState->setVertexAttrib(backend::ATTRIBUTE_NAME_POSITION, locPosition, backend::VertexFormat::FLOAT3, offsetof(V3F_C4B_T2F, vertices), false);
-		currentState->setVertexAttrib(backend::ATTRIBUTE_NAME_TEXCOORD, locColor, backend::VertexFormat::UBYTE4, offsetof(V3F_C4B_T2F, colors), true);
-		currentState->setVertexAttrib(backend::ATTRIBUTE_NAME_COLOR, locTexcoord, backend::VertexFormat::FLOAT2, offsetof(V3F_C4B_T2F, texCoords), false);
-        currentState->setVertexStride(sizeof(_vertices[0]));
-
-
-		command->_locMVP = currentState->getUniformLocation(backend::UNIFORM_NAME_MVP_MATRIX);
-		command->_locTexture = currentState->getUniformLocation(backend::UNIFORM_NAME_TEXTURE);
+		command->_locMVP     = currentState->getUniformLocation(backend::UNIFORM_NAME_MVP_MATRIX);
+        command->_locTexture = currentState->getUniformLocation(backend::UNIFORM_NAME_TEXTURE);
 	}
 	return currentState;
 }
@@ -143,8 +141,8 @@ unsigned short* SkeletonBatch::allocateIndices(uint32_t numIndices) {
 		_indices.ensureCapacity(_indices.size() + numIndices);
 		unsigned short* newData = _indices.buffer();
 		for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
-			SkeletonCommand* command = _commandsPool[i];
-			SkeletonCommand::Triangles& triangles = (SkeletonCommand::Triangles&)command->getTriangles();
+			auto command = _commandsPool[i];
+			auto& triangles = (SkeletonCommand::Triangles&)command->getTriangles();
 			if (triangles.indices >= oldData && triangles.indices < oldData + oldSize) {
 				triangles.indices = newData + (triangles.indices - oldData);
 			}
@@ -168,7 +166,7 @@ ax::TrianglesCommand* SkeletonBatch::addCommand(ax::Renderer* renderer, float gl
 	if (programState == nullptr)
 		programState = _programState;
 
-	CCASSERT(programState, "programState should not be null");
+	AXASSERT(programState, "programState should not be null");
 
 	auto pipelinePS = updateCommandPipelinePS(command, programState);
 	
@@ -203,4 +201,3 @@ SkeletonCommand* SkeletonBatch::newCommand() {
 }
 }
 
-#endif
