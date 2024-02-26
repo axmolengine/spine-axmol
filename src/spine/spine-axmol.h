@@ -27,11 +27,11 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef SPINE_COCOS2DX_H_
-#define SPINE_COCOS2DX_H_
+#ifndef SPINE_AXMOL_H_
+#define SPINE_AXMOL_H_
 
 #include <spine/spine.h>
-#include "cocos2d.h"
+#include "axmol.h"
 #include <spine/Cocos2dAttachmentLoader.h>
 #include <spine/SkeletonRenderer.h>
 #include <spine/SkeletonBatch.h>
@@ -39,7 +39,7 @@
 
 #include <spine/SkeletonAnimation.h>
 
-#define CC_USE_SPINE_CPP 0
+#define AX_SPINE_VERSION 0x030600
 
 namespace spine {
 	typedef ax::Texture2D* (*CustomTextureLoader)(const char* path);

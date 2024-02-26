@@ -30,7 +30,7 @@
 #ifndef SPINE_SKELETONRENDERER_H_
 #define SPINE_SKELETONRENDERER_H_
 
-#include "cocos2d.h"
+#include "axmol.h"
 #include <spine/spine.h>
 
 namespace spine {
@@ -40,7 +40,6 @@ namespace spine {
     /* Draws a skeleton. */
     class SP_API SkeletonRenderer : public ax::Node, public ax::BlendProtocol {
     public:
-        CREATE_FUNC(SkeletonRenderer);
         static SkeletonRenderer* createWithSkeleton(spSkeleton* skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false);
         static SkeletonRenderer* createWithData(spSkeletonData* skeletonData, bool ownsSkeletonData = false);
         static SkeletonRenderer* createWithFile(const std::string& skeletonDataFile, spAtlas* atlas, float scale = 1);
@@ -114,7 +113,6 @@ namespace spine {
         // Frees global memory used for temporay vertex transformations.
         static void destroyScratchBuffers();
 
-    CC_CONSTRUCTOR_ACCESS:
         SkeletonRenderer();
         SkeletonRenderer(spSkeleton* skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false);
         SkeletonRenderer(spSkeletonData* skeletonData, bool ownsSkeletonData = false);

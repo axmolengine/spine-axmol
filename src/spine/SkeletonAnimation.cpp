@@ -29,11 +29,11 @@
  *****************************************************************************/
 
 #include <spine/SkeletonAnimation.h>
-#include <spine/spine-cocos2dx.h>
+#include <spine/spine-axmol.h>
 #include <spine/extension.h>
 #include <algorithm>
 
-USING_NS_CC;
+USING_NS_AX;
 using std::min;
 using std::max;
 using std::vector;
@@ -147,7 +147,7 @@ void SkeletonAnimation::draw(ax::Renderer *renderer, const ax::Mat4 &transform, 
 }
 
 void SkeletonAnimation::setAnimationStateData (spAnimationStateData* stateData) {
-	CCASSERT(stateData, "stateData cannot be null.");
+	AXASSERT(stateData, "stateData cannot be null.");
 
     if (_ownsAnimationStateData) spAnimationStateData_dispose(_state->data);
     spAnimationState_dispose(_state);

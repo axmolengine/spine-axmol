@@ -27,7 +27,7 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include <spine/spine-cocos2dx.h>
+#include <spine/spine-axmol.h>
 #include <spine/extension.h>
  //#include <spine/SkeletonBatch.h>
  //#include <spine/SkeletonTwoColorBatch.h>
@@ -776,7 +776,7 @@ namespace spine {
         return (AttachmentVertices*)attachment->rendererObject;
     }
 
-    Rect SkeletonRenderer::getBoundingBox() const {
+    ax::Rect SkeletonRenderer::getBoundingBox() const {
         float minX = FLT_MAX, minY = FLT_MAX, maxX = -FLT_MAX, maxY = -FLT_MAX;
         float scaleX = getScaleX(), scaleY = getScaleY();
         for (int i = 0; i < _skeleton->slotsCount; ++i) {

@@ -27,94 +27,50 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include <spine/spine-cocos2dx.h>
-#if COCOS2D_VERSION >= 0x00040000
+#include <spine/spine-axmol.h>
 
-#include <spine/Extension.h>
+#include "base/Types.h"
+#include "base/Utils.h"
 #include <algorithm>
-#include <stddef.h> // offsetof
-#include "base/ccTypes.h"
-#include "base/ccUtils.h"
+#include <spine/Extension.h>
+#include <stddef.h>// offsetof
 
+#include "renderer/backend/DriverBase.h"
+#include "renderer/Shaders.h"
 #include "xxhash.h"
-#include "renderer/ccShaders.h"
-#include "renderer/backend/Device.h"
 
-USING_NS_CC;
+USING_NS_AX;
 #define EVENT_AFTER_DRAW_RESET_POSITION "director_after_draw"
 using std::max;
 #define INITIAL_SIZE (10000)
 #define MAX_VERTICES 64000
 #define MAX_INDICES 64000
 
-#define STRINGIFY(A)  #A
-
 namespace {
 
-    const char* TWO_COLOR_TINT_VERTEX_SHADER = STRINGIFY(
-    uniform mat4 u_PMatrix;
-    attribute vec4 a_position;
-    attribute vec4 a_color;
-    attribute vec4 a_color2;
-    attribute vec2 a_texCoords;
-
-    \n#ifdef GL_ES\n
-        varying lowp vec4 v_light;
-    varying lowp vec4 v_dark;
-    varying mediump vec2 v_texCoord;
-    \n#else\n
-        varying vec4 v_light;
-    varying vec4 v_dark;
-    varying vec2 v_texCoord;
-
-    \n#endif\n
-
-        void main() {
-        v_light = a_color;
-        v_dark = a_color2;
-        v_texCoord = a_texCoords;
-        gl_Position = u_PMatrix * a_position;
-    }
-    );
-
-    const char* TWO_COLOR_TINT_FRAGMENT_SHADER = STRINGIFY(
-        \n#ifdef GL_ES\n
-        precision lowp float;
-    \n#endif\n
-        uniform sampler2D u_texture;
-    varying vec4 v_light;
-    varying vec4 v_dark;
-    varying vec2 v_texCoord;
-
-    void main() {
-        vec4 texColor = texture2D(u_texture, v_texCoord);
-        float alpha = texColor.a * v_light.a;
-        gl_FragColor.a = alpha;
-        gl_FragColor.rgb = ((texColor.a - 1.0) * v_dark.a + 1.0 - texColor.rgb) * v_dark.rgb + texColor.rgb * v_light.rgb;
-    }
-    );
-
-
-    std::shared_ptr<backend::ProgramState>  __twoColorProgramState = nullptr;
-    backend::UniformLocation                __locPMatrix;
-    backend::UniformLocation                __locTexture;
+	std::shared_ptr<backend::ProgramState> __twoColorProgramState = nullptr;
+	backend::UniformLocation __locPMatrix;
+	backend::UniformLocation __locTexture;
 
     static void updateProgramStateLayout(backend::ProgramState* programState) {
-        __locPMatrix = programState->getUniformLocation("u_PMatrix");
-        __locTexture = programState->getUniformLocation("u_texture");
-
-        auto layout = programState->getVertexLayout();
+		__locPMatrix = programState->getUniformLocation("u_PMatrix");
+		__locTexture = programState->getUniformLocation("u_tex0");
 
         auto locPosition = programState->getAttributeLocation("a_position");
-        auto locTexcoord = programState->getAttributeLocation("a_texCoords");
+        auto locTexcoord = programState->getAttributeLocation("a_texCoord");
         auto locColor = programState->getAttributeLocation("a_color");
         auto locColor2 = programState->getAttributeLocation("a_color2");
 
-        programState->setVertexAttrib("a_position", locPosition, backend::VertexFormat::FLOAT3, offsetof(spine::V3F_C4B_C4B_T2F, position), false);
-        programState->setVertexAttrib("a_color", locColor, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color), true);
-        programState->setVertexAttrib("a_color2", locColor2, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color2), true);
-        programState->setVertexAttrib("a_texCoords", locTexcoord, backend::VertexFormat::FLOAT2, offsetof(spine::V3F_C4B_C4B_T2F, texCoords), false);
-        programState->setVertexStride(sizeof(spine::V3F_C4B_C4B_T2F));
+        auto vertexLayout = programState->getMutableVertexLayout();
+        vertexLayout->setAttrib("a_position", locPosition, backend::VertexFormat::FLOAT3,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, position), false);
+        vertexLayout->setAttrib("a_color", locColor, backend::VertexFormat::UBYTE4,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, color), true);
+        vertexLayout->setAttrib("a_color2", locColor2, backend::VertexFormat::UBYTE4,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, color2), true);
+        vertexLayout->setAttrib("a_texCoord", locTexcoord, backend::VertexFormat::FLOAT2,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, texCoords), false);
+        vertexLayout->setStride(sizeof(spine::V3F_C4B_C4B_T2F));
     }
 
     static void initTwoColorProgramState()
@@ -122,12 +78,11 @@ namespace {
         if (__twoColorProgramState)
         {
             return;
-        }
-        auto program = backend::Device::getInstance()->newProgram(TWO_COLOR_TINT_VERTEX_SHADER, TWO_COLOR_TINT_FRAGMENT_SHADER);
-        auto* programState = new backend::ProgramState(program);
-        program->release();
-
-        updateProgramStateLayout(programState);
+		}
+                auto program       = ProgramManager::getInstance()->loadProgram("custom/spineTwoColorTint_vs",
+                                                                                      "custom/spineTwoColorTint_fs");
+		auto *programState = new backend::ProgramState(program);
+		updateProgramStateLayout(programState);
 
         __twoColorProgramState = std::shared_ptr<backend::ProgramState>(programState);
     }
@@ -157,7 +112,7 @@ void TwoColorTrianglesCommand::init(float globalOrder, ax::Texture2D *texture, a
     if (_triangles.indexCount % 3 != 0) {
         int count = _triangles.indexCount;
         _triangles.indexCount = count / 3 * 3;
-        CCLOGERROR("Resize indexCount from %d to %d, size must be multiple times of 3", count, _triangles.indexCount);
+        AXLOGERROR("Resize indexCount from %d to %d, size must be multiple times of 3", count, _triangles.indexCount);
     }
 
     _mv = mv;
@@ -194,19 +149,19 @@ void TwoColorTrianglesCommand::updateCommandPipelineDescriptor(ax::backend::Prog
     if (programState != nullptr)
     {
         if (_programState != programState) {
-            CC_SAFE_RELEASE(_programState);
+            AX_SAFE_RELEASE(_programState);
             _programState = programState; // Because the programState belong to Node, so no need to clone
-            CC_SAFE_RETAIN(_programState);
+            AX_SAFE_RETAIN(_programState);
             needsUpdateStateLayout = true;
         }
     }
     else {
         needsUpdateStateLayout = _programState != nullptr && _programState->getProgram() != __twoColorProgramState->getProgram();
-        CC_SAFE_RELEASE(_programState);
+        AX_SAFE_RELEASE(_programState);
         _programState = __twoColorProgramState->clone();
     }
 
-    CCASSERT(_programState, "programState should not be null");
+    AXASSERT(_programState, "programState should not be null");
     pipelinePS = _programState;
 
     if (needsUpdateStateLayout)
@@ -218,7 +173,7 @@ void TwoColorTrianglesCommand::updateCommandPipelineDescriptor(ax::backend::Prog
 
 TwoColorTrianglesCommand::~TwoColorTrianglesCommand()
 {
-    CC_SAFE_RELEASE_NULL(_programState);
+    AX_SAFE_RELEASE_NULL(_programState);
 }
 
 void TwoColorTrianglesCommand::generateMaterialID() {
@@ -333,12 +288,16 @@ void SkeletonTwoColorBatch::deallocateVertices(uint32_t numVertices) {
 unsigned short* SkeletonTwoColorBatch::allocateIndices(uint32_t numIndices) {
 	if (_indices.size() - _numIndices < numIndices) {
 		unsigned short* oldData = _indices.data();
+            auto oldSize        = _indices.size();
 		_indices.resize((_indices.size() + numIndices) * 2 + 1);
 		unsigned short* newData = _indices.data();
 		for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
 			TwoColorTrianglesCommand* command = _commandsPool[i];
 			TwoColorTriangles& triangles = (TwoColorTriangles&)command->getTriangles();
-			triangles.indices = newData + (triangles.indices - oldData);
+            if (triangles.indices >= oldData && triangles.indices < oldData + oldSize)
+            {
+                triangles.indices = newData + (triangles.indices - oldData);
+            }
 		}
 	}
 
@@ -425,5 +384,3 @@ TwoColorTrianglesCommand* SkeletonTwoColorBatch::nextFreeCommand() {
 	return command;
 }
 }
-
-#endif

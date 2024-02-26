@@ -30,61 +30,58 @@
 #ifndef SPINE_SKELETONBATCH_H_
 #define SPINE_SKELETONBATCH_H_
 
-#include "cocos2d.h"
-#if COCOS2D_VERSION >= 0x00040000
-
+#include "axmol.h"
+#include "base/axstd.h"
 #include <spine/spine.h>
 #include <vector>
 #include "renderer/backend/ProgramState.h"
 
 namespace spine {
-    
-    class SP_API SkeletonBatch {
-    public:
-        static SkeletonBatch* getInstance ();
-        
-        static void destroyInstance ();
-        
-        void update (float delta);
-		
-		ax::V3F_C4B_T2F* allocateVertices(uint32_t numVertices);
+	struct SkeletonCommand : public ax::TrianglesCommand {
+		ax::backend::UniformLocation _locMVP;
+		ax::backend::UniformLocation _locTexture;
+	};
+	class SP_API SkeletonBatch {
+	public:
+		static SkeletonBatch *getInstance();
+
+		static void destroyInstance();
+
+		void update(float delta);
+
+		ax::V3F_C4B_T2F *allocateVertices(uint32_t numVertices);
 		void deallocateVertices(uint32_t numVertices);
 		unsigned short* allocateIndices(uint32_t numIndices);
 		void deallocateIndices(uint32_t numVertices);
-		ax::TrianglesCommand* addCommand(ax::Renderer* renderer, float globalOrder, ax::Texture2D* texture, ax::backend::ProgramState* programState, ax::BlendFunc blendType, const ax::TrianglesCommand::Triangles& triangles, const ax::Mat4& mv, uint32_t flags);
-        
-		void updateProgramStateLayout(ax::backend::ProgramState* programState);
+		ax::TrianglesCommand *addCommand(ax::Renderer *renderer, float globalOrder, ax::Texture2D *texture, ax::backend::ProgramState *programState, ax::BlendFunc blendType, const ax::TrianglesCommand::Triangles &triangles, const ax::Mat4 &mv, uint32_t flags);
 
-    protected:
-        SkeletonBatch ();
-        virtual ~SkeletonBatch ();
-		
-		void reset ();
-		
-		ax::TrianglesCommand* nextFreeCommand ();
+		ax::backend::ProgramState* updateCommandPipelinePS(SkeletonCommand* command, ax::backend::ProgramState* programState);
 
-        ax::TrianglesCommand* createNewTrianglesCommand();
+	protected:
+		SkeletonBatch();
+		virtual ~SkeletonBatch();
 
-        // the default program state for batch draw
-        ax::backend::ProgramState*                     _programState = nullptr;
-        ax::backend::UniformLocation                   _locMVP;
-        ax::backend::UniformLocation                   _locTexture;
-		
+		void reset();
+
+		SkeletonCommand* nextFreeCommand ();
+
+		SkeletonCommand* newCommand();
+
+		ax::backend::ProgramState*                     _programState; // The default program state
+
 		// pool of commands
-		std::vector<ax::TrianglesCommand*>             _commandsPool;
-		uint32_t                                            _nextFreeCommand;
-		
-		// pool of vertices
-		std::vector<ax::V3F_C4B_T2F>                   _vertices;
-		uint32_t                                            _numVertices;
-		
-		// pool of indices
-		std::vector<unsigned short>                         _indices;
-		uint32_t                                            _numIndices;
-    };
-	
-}
+		std::vector<SkeletonCommand *> _commandsPool;
+		uint32_t _nextFreeCommand;
 
-#endif
+		// pool of vertices
+		std::vector<ax::V3F_C4B_T2F> _vertices;
+		uint32_t _numVertices;
+
+		// pool of indices
+        axstd::pod_vector<unsigned short> _indices;
+        uint32_t _numIndices{0};
+	};
+
+}// namespace spine
 
 #endif // SPINE_SKELETONBATCH_H_

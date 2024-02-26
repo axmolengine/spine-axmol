@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include <spine/spine-cocos2dx.h>
+#include <spine/spine-axmol.h>
 #include <spine/extension.h>
 
 namespace spine {
@@ -38,7 +38,7 @@ namespace spine {
 	}
 }
 
-USING_NS_CC;
+USING_NS_AX;
 
 backend::SamplerAddressMode wrap (spAtlasWrap wrap) {
 	return wrap == SP_ATLAS_CLAMPTOEDGE ? backend::SamplerAddressMode::CLAMP_TO_EDGE : backend::SamplerAddressMode::REPEAT;
@@ -75,7 +75,7 @@ void _spAtlasPage_createTexture (spAtlasPage* self, const char* path) {
 		texture = Director::getInstance()->getTextureCache()->addImage(path);
 	}
 	auto hasPremultiAlpha = texture->hasPremultipliedAlpha();
-	CCASSERT(texture != nullptr, "Invalid image");
+	AXASSERT(texture != nullptr, "Invalid image");
 	texture->retain();
 
 	Texture2D::TexParams textureParams = {filter(self->minFilter), filter(self->magFilter), wrap(self->uWrap), wrap(self->vWrap)};
@@ -95,15 +95,8 @@ char* _spUtil_readFile (const char* path, int* length) {
 	if (data.isNull()) return 0;
 
 	// avoid buffer overflow (int is shorter than ssize_t in certain platforms)
-#if COCOS2D_VERSION >= 0x00031200
 	ssize_t tmpLen;
 	char *ret = (char*)data.takeBuffer(&tmpLen);
 	*length = static_cast<int>(tmpLen);
 	return ret;
-#else
-    *length = static_cast<int>(data.getSize());
-    char* bytes = MALLOC(char, *length);
-    memcpy(bytes, data.getBytes(), *length);
-    return bytes;
-#endif
 }

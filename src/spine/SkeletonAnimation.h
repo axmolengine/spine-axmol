@@ -31,8 +31,8 @@
 #define SPINE_SKELETONANIMATION_H_
 
 #include <spine/spine.h>
-#include <spine/spine-cocos2dx.h>
-#include "cocos2d.h"
+#include <spine/spine-axmol.h>
+#include "axmol.h"
 
 namespace spine {
 
@@ -47,7 +47,6 @@ typedef std::function<void(spTrackEntry* entry, spEvent* event)> EventListener;
   * played later. */
 class SP_API SkeletonAnimation: public SkeletonRenderer {
 public:
-	CREATE_FUNC(SkeletonAnimation);
 	static SkeletonAnimation* createWithData (spSkeletonData* skeletonData, bool ownsSkeletonData = false);
 	static SkeletonAnimation* createWithJsonFile (const std::string& skeletonJsonFile, spAtlas* atlas, float scale = 1);
 	static SkeletonAnimation* createWithJsonFile (const std::string& skeletonJsonFile, const std::string& atlasFile, float scale = 1);
@@ -55,12 +54,12 @@ public:
 	static SkeletonAnimation* createWithBinaryFile (const std::string& skeletonBinaryFile, const std::string& atlasFile, float scale = 1);
 
 	// Use createWithJsonFile instead
-	CC_DEPRECATED_ATTRIBUTE static SkeletonAnimation* createWithFile (const std::string& skeletonJsonFile, spAtlas* atlas, float scale = 1)
+	AX_DEPRECATED_ATTRIBUTE static SkeletonAnimation* createWithFile (const std::string& skeletonJsonFile, spAtlas* atlas, float scale = 1)
 	{
 		return SkeletonAnimation::createWithJsonFile(skeletonJsonFile, atlas, scale);
 	}
 	// Use createWithJsonFile instead
-	CC_DEPRECATED_ATTRIBUTE static SkeletonAnimation* createWithFile (const std::string& skeletonJsonFile, const std::string& atlasFile, float scale = 1)
+	AX_DEPRECATED_ATTRIBUTE static SkeletonAnimation* createWithFile (const std::string& skeletonJsonFile, const std::string& atlasFile, float scale = 1)
 	{
 		return SkeletonAnimation::createWithJsonFile(skeletonJsonFile, atlasFile, scale);
 	}
@@ -103,7 +102,6 @@ public:
 	spAnimationState* getState() const;
 	//void setUpdateOnlyIfVisible(bool status);
 
-CC_CONSTRUCTOR_ACCESS:
 	SkeletonAnimation ();
 	virtual ~SkeletonAnimation ();
 	virtual void initialize () override;
