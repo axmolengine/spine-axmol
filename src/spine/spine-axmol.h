@@ -40,6 +40,7 @@
 #include <spine/SkeletonAnimation.h>
 
 #define AX_SPINE_VERSION 0x030600
+#define AX_USE_SPINE_CPP 0
 
 namespace spine {
 	typedef ax::Texture2D* (*CustomTextureLoader)(const char* path);
