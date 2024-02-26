@@ -68,6 +68,9 @@ namespace spine {
 	protected:
 		virtual char *_readFile(const String &path, int *length);
 	};
+
+	using Cocos2dAtlasAttachmentLoader = AxmolAtlasAttachmentLoader;
+	using Cocos2dTextureLoader = AxmolTextureLoader;
 }
 
 #endif /* SPINE_COCOS2DX_H_ */
