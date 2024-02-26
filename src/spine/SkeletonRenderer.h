@@ -30,7 +30,7 @@
 #ifndef SPINE_SKELETONRENDERER_H_
 #define SPINE_SKELETONRENDERER_H_
 
-#include "cocos2d.h"
+#include "axmol.h"
 #include <spine/spine.h>
 
 namespace spine {
@@ -40,7 +40,6 @@ namespace spine {
 	/* Draws a skeleton. */
 	class SP_API SkeletonRenderer: public ax::Node, public ax::BlendProtocol {
 	public:
-		CREATE_FUNC(SkeletonRenderer);
 		static SkeletonRenderer* createWithSkeleton(Skeleton* skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false);
 		static SkeletonRenderer* createWithData (SkeletonData* skeletonData, bool ownsSkeletonData = false);
 		static SkeletonRenderer* createWithFile (const std::string& skeletonDataFile, Atlas* atlas, float scale = 1);
@@ -113,8 +112,6 @@ namespace spine {
 		const ax::BlendFunc& getBlendFunc () const override;
 		void setOpacityModifyRGB (bool value) override;
 		bool isOpacityModifyRGB () const override;
-
-	CC_CONSTRUCTOR_ACCESS:
 		SkeletonRenderer ();
 		SkeletonRenderer(Skeleton* skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false, bool ownsAtlas = false);
 		SkeletonRenderer (SkeletonData* skeletonData, bool ownsSkeletonData = false);

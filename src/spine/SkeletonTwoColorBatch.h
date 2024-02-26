@@ -30,8 +30,7 @@
 #ifndef SPINE_SKELETONTWOCOLORBATCH_H_
 #define SPINE_SKELETONTWOCOLORBATCH_H_
 
-#include "cocos2d.h"
-#if COCOS2D_VERSION >= 0x00040000
+#include "axmol.h"
 
 #include <spine/spine.h>
 #include <vector>
@@ -160,7 +159,5 @@ namespace spine {
 		uint32_t _numBatches;
 	};
 }
-
-#endif
 
 #endif // SPINE_SKELETONTWOCOLORBATCH_H_

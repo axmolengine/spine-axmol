@@ -27,8 +27,10 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include <spine/spine-cocos2dx.h>
+#include <spine/spine-axmol.h>
 #include <spine/Extension.h>
+ //#include <spine/SkeletonBatch.h>
+ //#include <spine/SkeletonTwoColorBatch.h>
 #include <spine/AttachmentVertices.h>
 #include <algorithm>
 
@@ -37,7 +39,7 @@ USING_NS_CC;
 namespace spine {
 
 namespace {
-	Cocos2dTextureLoader textureLoader;
+	AxmolTextureLoader textureLoader;
 
 	int computeTotalCoordCount(Skeleton& skeleton, int startSlotIndex, int endSlotIndex);
 	ax::Rect computeBoundingRect(const float* coords, int vertexCount);
@@ -153,7 +155,7 @@ void SkeletonRenderer::initWithData (SkeletonData* skeletonData, bool ownsSkelet
 
 void SkeletonRenderer::initWithJsonFile (const std::string& skeletonDataFile, Atlas* atlas, float scale) {
 	_atlas = atlas;
-	_attachmentLoader = new (__FILE__, __LINE__) Cocos2dAtlasAttachmentLoader(_atlas);
+	_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
 	SkeletonJson json(_attachmentLoader);
 	json.setScale(scale);
@@ -170,7 +172,7 @@ void SkeletonRenderer::initWithJsonFile (const std::string& skeletonDataFile, co
 	_atlas = new (__FILE__, __LINE__) Atlas(atlasFile.c_str(), &textureLoader);
 	CCASSERT(_atlas, "Error reading atlas file.");
 
-	_attachmentLoader = new (__FILE__, __LINE__) Cocos2dAtlasAttachmentLoader(_atlas);
+	_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
 	SkeletonJson json(_attachmentLoader);
 	json.setScale(scale);
@@ -186,7 +188,7 @@ void SkeletonRenderer::initWithJsonFile (const std::string& skeletonDataFile, co
 
 void SkeletonRenderer::initWithBinaryFile (const std::string& skeletonDataFile, Atlas* atlas, float scale) {
 	_atlas = atlas;
-	_attachmentLoader = new (__FILE__, __LINE__) Cocos2dAtlasAttachmentLoader(_atlas);
+	_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
 	SkeletonBinary binary(_attachmentLoader);
 	binary.setScale(scale);
@@ -202,7 +204,7 @@ void SkeletonRenderer::initWithBinaryFile (const std::string& skeletonDataFile, 
 	_atlas = new (__FILE__, __LINE__) Atlas(atlasFile.c_str(), &textureLoader);
 	CCASSERT(_atlas, "Error reading atlas file.");
 
-	_attachmentLoader = new (__FILE__, __LINE__) Cocos2dAtlasAttachmentLoader(_atlas);
+	_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
 	SkeletonBinary binary(_attachmentLoader);
 	binary.setScale(scale);
