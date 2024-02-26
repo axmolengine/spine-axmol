@@ -19,7 +19,10 @@ if(BUILD_SHARED_LIBS)
     )
 endif()
 
-target_include_directories(${target_name} PUBLIC "runtime/include")
+target_include_directories(
+    ${target_name} PUBLIC "runtime/include"
+    ${target_name} PUBLIC src
+)
 
 get_target_property(AX_VERSION ${_AX_CORE_LIB} VERSION)
 if (AX_VERSION VERSION_GREATER_EQUAL 2.0)

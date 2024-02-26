@@ -27,41 +27,43 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef SPINE_COCOS2DX_H_
-#define SPINE_COCOS2DX_H_
+#ifndef SPINE_AXMOL_H_
+#define SPINE_AXMOL_H_
 
 #include <spine/spine.h>
-#include "cocos2d.h"
+#include "axmol.h"
 
 #include <spine/SkeletonRenderer.h>
 #include <spine/SkeletonBatch.h>
 #include <spine/SkeletonTwoColorBatch.h>
 #include <spine/SkeletonAnimation.h>
 
+#define AX_SPINE_VERSION 0x030800
+
 namespace spine {
-	class SP_API Cocos2dAtlasAttachmentLoader: public AtlasAttachmentLoader {
+	class SP_API AxmolAtlasAttachmentLoader: public AtlasAttachmentLoader {
 	public:
-		Cocos2dAtlasAttachmentLoader(Atlas* atlas);
-		virtual ~Cocos2dAtlasAttachmentLoader();
+		AxmolAtlasAttachmentLoader(Atlas* atlas);
+		virtual ~AxmolAtlasAttachmentLoader();
 		virtual void configureAttachment(Attachment* attachment);
 	};
 
-	class SP_API Cocos2dTextureLoader: public TextureLoader {
+	class SP_API AxmolTextureLoader: public TextureLoader {
 	public:
-		Cocos2dTextureLoader();
+		AxmolTextureLoader();
 		
-		virtual ~Cocos2dTextureLoader();
+		virtual ~AxmolTextureLoader();
 		
 		virtual void load(AtlasPage& page, const String& path);
 
 		virtual void unload(void* texture);
 	};
 
-	class SP_API Cocos2dExtension: public DefaultSpineExtension {
+	class SP_API AxmolExtension: public DefaultSpineExtension {
 	public:
-		Cocos2dExtension();
+		AxmolExtension();
 		
-		virtual ~Cocos2dExtension();
+		virtual ~AxmolExtension();
 		
 	protected:
 		virtual char *_readFile(const String &path, int *length);

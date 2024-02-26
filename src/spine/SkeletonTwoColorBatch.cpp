@@ -28,7 +28,6 @@
  *****************************************************************************/
 
 #include <spine/spine-cocos2dx.h>
-#if COCOS2D_VERSION >= 0x00040000
 
 #include <spine/Extension.h>
 #include <algorithm>
@@ -39,7 +38,7 @@
 
 #include "xxhash.h"
 #include "renderer/Shaders.h"
-#include "renderer/backend/Device.h"
+#include "renderer/backend/DriverBase.h"
 #else
 #include "base/ccTypes.h"
 #include "base/ccUtils.h"
@@ -69,7 +68,7 @@ namespace {
     attribute vec4 a_position;
     attribute vec4 a_color;
     attribute vec4 a_color2;
-    attribute vec2 a_texCoords;
+    attribute vec2 a_texCoord;
 
     \n#ifdef GL_ES\n
         varying lowp vec4 v_light;
@@ -85,7 +84,7 @@ namespace {
         void main() {
         v_light = a_color;
         v_dark = a_color2;
-        v_texCoord = a_texCoords;
+        v_texCoord = a_texCoord;
         gl_Position = u_PMatrix * a_position;
     }
     );
@@ -94,13 +93,13 @@ namespace {
         \n#ifdef GL_ES\n
         precision lowp float;
     \n#endif\n
-        uniform sampler2D u_texture;
+        uniform sampler2D u_tex0;
     varying vec4 v_light;
     varying vec4 v_dark;
     varying vec2 v_texCoord;
 
     void main() {
-        vec4 texColor = texture2D(u_texture, v_texCoord);
+        vec4 texColor = texture2D(u_tex0, v_texCoord);
         float alpha = texColor.a * v_light.a;
         gl_FragColor.a = alpha;
         gl_FragColor.rgb = ((texColor.a - 1.0) * v_dark.a + 1.0 - texColor.rgb) * v_dark.rgb + texColor.rgb * v_light.rgb;
@@ -115,18 +114,23 @@ namespace {
 
     static void updateProgramStateLayout(backend::ProgramState* programState) {
         __locPMatrix = programState->getUniformLocation("u_PMatrix");
-        __locTexture = programState->getUniformLocation("u_texture");
+        __locTexture = programState->getUniformLocation("u_tex0");
 
         auto locPosition = programState->getAttributeLocation("a_position");
-        auto locTexcoord = programState->getAttributeLocation("a_texCoords");
+        auto locTexcoord = programState->getAttributeLocation("a_texCoord");
         auto locColor = programState->getAttributeLocation("a_color");
         auto locColor2 = programState->getAttributeLocation("a_color2");
 
-        programState->setVertexAttrib("a_position", locPosition, backend::VertexFormat::FLOAT3, offsetof(spine::V3F_C4B_C4B_T2F, position), false);
-        programState->setVertexAttrib("a_color", locColor, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color), true);
-        programState->setVertexAttrib("a_color2", locColor2, backend::VertexFormat::UBYTE4, offsetof(spine::V3F_C4B_C4B_T2F, color2), true);
-        programState->setVertexAttrib("a_texCoords", locTexcoord, backend::VertexFormat::FLOAT2, offsetof(spine::V3F_C4B_C4B_T2F, texCoords), false);
-        programState->setVertexStride(sizeof(spine::V3F_C4B_C4B_T2F));
+        auto vertexLayout = programState->getMutableVertexLayout();
+        vertexLayout->setAttrib("a_position", locPosition, backend::VertexFormat::FLOAT3,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, position), false);
+        vertexLayout->setAttrib("a_color", locColor, backend::VertexFormat::UBYTE4,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, color), true);
+        vertexLayout->setAttrib("a_color2", locColor2, backend::VertexFormat::UBYTE4,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, color2), true);
+        vertexLayout->setAttrib("a_texCoord", locTexcoord, backend::VertexFormat::FLOAT2,
+                                     offsetof(spine::V3F_C4B_C4B_T2F, texCoords), false);
+        vertexLayout->setStride(sizeof(spine::V3F_C4B_C4B_T2F));
     }
 
     static void initTwoColorProgramState()
@@ -446,5 +450,3 @@ TwoColorTrianglesCommand* SkeletonTwoColorBatch::nextFreeCommand() {
 	return command;
 }
 }
-
-#endif

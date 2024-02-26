@@ -27,8 +27,7 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include <spine/spine-cocos2dx.h>
-#if COCOS2D_VERSION >= 0x00040000
+#include <spine/spine-axmol.h>
 
 #include <spine/Extension.h>
 #include <algorithm>
@@ -40,7 +39,7 @@ using std::max;
 
 #if AX_VERSION >= 0X00020000
 #include "renderer/Shaders.h"
-#include "renderer/backend/Device.h"
+#include "renderer/backend/DriverBase.h"
 #include "renderer/backend/Types.h"
 #else
 #include "renderer/ccShaders.h"
@@ -75,7 +74,7 @@ SkeletonBatch::SkeletonBatch () {
     // for the next frame
     Director::getInstance()->getEventDispatcher()->addCustomEventListener(EVENT_AFTER_DRAW_RESET_POSITION, [this](EventCustom* eventCustom) {
         this->update(0);
-        });;
+        });
 }
 
 SkeletonBatch::~SkeletonBatch () {
@@ -147,8 +146,8 @@ unsigned short* SkeletonBatch::allocateIndices(uint32_t numIndices) {
 		_indices.ensureCapacity(_indices.size() + numIndices);
 		unsigned short* newData = _indices.buffer();
 		for (uint32_t i = 0; i < this->_nextFreeCommand; i++) {
-			SkeletonCommand* command = _commandsPool[i];
-			SkeletonCommand::Triangles& triangles = (SkeletonCommand::Triangles&)command->getTriangles();
+			auto command = _commandsPool[i];
+			auto& triangles = (SkeletonCommand::Triangles&)command->getTriangles();
 			if (triangles.indices >= oldData && triangles.indices < oldData + oldSize) {
 				triangles.indices = newData + (triangles.indices - oldData);
 			}
@@ -207,4 +206,3 @@ SkeletonCommand* SkeletonBatch::newCommand() {
 }
 }
 
-#endif
