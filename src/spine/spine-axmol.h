@@ -33,7 +33,7 @@
 #include "axmol/axmol.h"
 #include <spine/spine.h>
 
-#include <spine/SkeletonRenderer.h>
+#include <spine/SkeletonRendererAxmol.h>
 #include <spine/SkeletonBatch.h>
 #include <spine/SkeletonTwoColorBatch.h>
 

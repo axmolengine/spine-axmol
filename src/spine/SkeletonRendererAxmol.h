@@ -38,13 +38,13 @@ namespace spine {
 	class AttachmentVertices;
 
 	/* Draws a skeleton. */
-	class SP_API SkeletonRenderer : public axmol::Node, public axmol::BlendProtocol {
+	class SP_API SkeletonRendererAxmol : public axmol::Node, public axmol::BlendProtocol {
 	public:
-		CREATE_FUNC(SkeletonRenderer);
-		static SkeletonRenderer *createWithSkeleton(Skeleton *skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false);
-		static SkeletonRenderer *createWithData(SkeletonData *skeletonData, bool ownsSkeletonData = false);
-		static SkeletonRenderer *createWithFile(const std::string &skeletonDataFile, Atlas *atlas, float scale = 1);
-		static SkeletonRenderer *createWithFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale = 1);
+		CREATE_FUNC(SkeletonRendererAxmol);
+		static SkeletonRendererAxmol *createWithSkeleton(Skeleton *skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false);
+		static SkeletonRendererAxmol *createWithData(SkeletonData *skeletonData, bool ownsSkeletonData = false);
+		static SkeletonRendererAxmol *createWithFile(const std::string &skeletonDataFile, Atlas *atlas, float scale = 1);
+		static SkeletonRendererAxmol *createWithFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale = 1);
 
 		void update(float deltaTime) override;
 		void draw(axmol::Renderer *renderer, const axmol::Mat4 &transform, uint32_t transformFlags) override;
@@ -111,13 +111,13 @@ namespace spine {
 		void setOpacityModifyRGB(bool value) override;
 		bool isOpacityModifyRGB() const override;
 
-		SkeletonRenderer();
-		SkeletonRenderer(Skeleton *skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false, bool ownsAtlas = false);
-		SkeletonRenderer(SkeletonData *skeletonData, bool ownsSkeletonData = false);
-		SkeletonRenderer(const std::string &skeletonDataFile, Atlas *atlas, float scale = 1);
-		SkeletonRenderer(const std::string &skeletonDataFile, const std::string &atlasFile, float scale = 1);
+		SkeletonRendererAxmol();
+		SkeletonRendererAxmol(Skeleton *skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false, bool ownsAtlas = false);
+		SkeletonRendererAxmol(SkeletonData *skeletonData, bool ownsSkeletonData = false);
+		SkeletonRendererAxmol(const std::string &skeletonDataFile, Atlas *atlas, float scale = 1);
+		SkeletonRendererAxmol(const std::string &skeletonDataFile, const std::string &atlasFile, float scale = 1);
 
-		virtual ~SkeletonRenderer();
+		virtual ~SkeletonRendererAxmol();
 
 		void initWithSkeleton(Skeleton *skeleton, bool ownsSkeleton = false, bool ownsSkeletonData = false, bool ownsAtlas = false);
 		void initWithData(SkeletonData *skeletonData, bool ownsSkeletonData = false);
@@ -141,6 +141,7 @@ namespace spine {
 		axmol::BlendFunc _blendFunc;
 		bool _premultipliedAlpha;
 		Skeleton *_skeleton;
+        SkeletonData* _skeletonData{nullptr};
 		float _timeScale;
 		bool _debugSlots;
 		bool _debugBones;

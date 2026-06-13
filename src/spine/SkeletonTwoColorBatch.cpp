@@ -47,7 +47,7 @@ USING_NS_AX;
 namespace spine {
 
 	TwoColorTrianglesCommand::TwoColorTrianglesCommand() : _materialID(0), _texture(nullptr), _blendType(BlendFunc::DISABLE) {
-		_type = RenderCommand::Type::CUSTOM_COMMAND;
+		_type = ax::RenderCommand::Type::CUSTOM_COMMAND;
 	}
 
 	void TwoColorTrianglesCommand::init(float globalOrder,
@@ -59,7 +59,7 @@ namespace spine {
                                             uint32_t flags)
         {
 
-		RenderCommand::init(globalOrder, mv, flags);
+		ax::RenderCommand::init(globalOrder, mv, flags);
 
 		_triangles = triangles;
 		if (_triangles.indexCount % 3 != 0) {
@@ -293,7 +293,7 @@ namespace spine {
 
 		command->init(globalOrder, texture, pipelinePS, blendType, triangles, mv, flags);
 
-        command->setOwnPSVL(pipelinePS, _twoColorVertexLayout, RenderCommand::ADOPT_FLAG_PS);
+        command->setOwnPSVL(pipelinePS, _twoColorVertexLayout, ax::RenderCommand::ADOPT_FLAG_PS);
 
 		command->updateVertexAndIndexBuffer(renderer, triangles.verts, triangles.vertCount, triangles.indices, triangles.indexCount);
 		renderer->addCommand(command);

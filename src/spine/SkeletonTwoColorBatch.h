@@ -141,7 +141,7 @@ namespace spine {
 		uint32_t _numVertices;
 
 		// pool of indices
-		Vector<unsigned short> _indices;
+		spine::Array<unsigned short> _indices;
 
 
         ax::rhi::ProgramState* _twoColorProgramState{nullptr};

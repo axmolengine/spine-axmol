@@ -48,11 +48,11 @@ namespace spine {
 		EventListener eventListener;
 	} _TrackEntryListeners;
 
-	void animationCallback(AnimationState *state, EventType type, TrackEntry *entry, Event *event) {
+	void animationCallback(AnimationState *state, EventType type, TrackEntry *entry, Event *event, void* userData) {
 		((SkeletonAnimation *) state->getRendererObject())->onAnimationStateEvent(entry, type, event);
 	}
 
-	void trackEntryCallback(AnimationState *state, EventType type, TrackEntry *entry, Event *event) {
+	void trackEntryCallback(AnimationState *state, EventType type, TrackEntry *entry, Event *event, void* userData) {
 		((SkeletonAnimation *) state->getRendererObject())->onTrackEntryEvent(entry, type, event);
 		if (type == EventType_Dispose) {
 			if (entry->getRendererObject()) {
@@ -111,9 +111,10 @@ namespace spine {
 	void SkeletonAnimation::initialize() {
 		super::initialize();
 
+        _stateData = new (__FILE__, __LINE__) AnimationStateData(_skeleton->getData());
 		_ownsAnimationStateData = true;
 		_updateOnlyIfVisible = false;
-		_state = new (__FILE__, __LINE__) AnimationState(new (__FILE__, __LINE__) AnimationStateData(_skeleton->getData()));
+		_state = new (__FILE__, __LINE__) AnimationState(*_stateData);
 		_state->setRendererObject(this);
 		_state->setListener(animationCallback);
 
@@ -121,11 +122,11 @@ namespace spine {
 	}
 
 	SkeletonAnimation::SkeletonAnimation()
-		: SkeletonRenderer() {
+		: SkeletonRendererAxmol() {
 	}
 
 	SkeletonAnimation::~SkeletonAnimation() {
-		if (_ownsAnimationStateData) delete _state->getData();
+		if (_ownsAnimationStateData) delete _stateData;
 		delete _state;
 	}
 
@@ -154,39 +155,40 @@ namespace spine {
 	void SkeletonAnimation::setAnimationStateData(AnimationStateData *stateData) {
 		AXASSERT(stateData, "stateData cannot be null.");
 
-		if (_ownsAnimationStateData) delete _state->getData();
 		delete _state;
+        if (_ownsAnimationStateData) delete _stateData;
 
 		_ownsAnimationStateData = false;
-		_state = new (__FILE__, __LINE__) AnimationState(stateData);
+		_stateData = stateData;
+		_state = new (__FILE__, __LINE__) AnimationState(*stateData);
 		_state->setRendererObject(this);
 		_state->setListener(animationCallback);
 	}
 
 	void SkeletonAnimation::setMix(const std::string &fromAnimation, const std::string &toAnimation, float duration) {
-		_state->getData()->setMix(fromAnimation.c_str(), toAnimation.c_str(), duration);
+		_state->getData().setMix(fromAnimation.c_str(), toAnimation.c_str(), duration);
 	}
 
-	TrackEntry *SkeletonAnimation::setAnimation(int trackIndex, const std::string &name, bool loop) {
-		Animation *animation = _skeleton->getData()->findAnimation(name.c_str());
+	TrackEntry* SkeletonAnimation::setAnimation(int trackIndex, const std::string &name, bool loop) {
+		Animation *animation = _skeleton->getData().findAnimation(name.c_str());
 		if (!animation) {
 			AXLOGW("Spine: Animation not found: {}", name);
 			return 0;
 		}
-		return _state->setAnimation(trackIndex, animation, loop);
+		return &_state->setAnimation(trackIndex, *animation, loop);
 	}
 
 	TrackEntry *SkeletonAnimation::addAnimation(int trackIndex, const std::string &name, bool loop, float delay) {
-		Animation *animation = _skeleton->getData()->findAnimation(name.c_str());
+		Animation *animation = _skeleton->getData().findAnimation(name.c_str());
 		if (!animation) {
 			AXLOGW("Spine: Animation not found: {}", name);
 			return 0;
 		}
-		return _state->addAnimation(trackIndex, animation, loop, delay);
+		return &_state->addAnimation(trackIndex, *animation, loop, delay);
 	}
 
 	TrackEntry *SkeletonAnimation::setEmptyAnimation(int trackIndex, float mixDuration) {
-		return _state->setEmptyAnimation(trackIndex, mixDuration);
+		return &_state->setEmptyAnimation(trackIndex, mixDuration);
 	}
 
 	void SkeletonAnimation::setEmptyAnimations(float mixDuration) {
@@ -194,15 +196,15 @@ namespace spine {
 	}
 
 	TrackEntry *SkeletonAnimation::addEmptyAnimation(int trackIndex, float mixDuration, float delay) {
-		return _state->addEmptyAnimation(trackIndex, mixDuration, delay);
+		return &_state->addEmptyAnimation(trackIndex, mixDuration, delay);
 	}
 
 	Animation *SkeletonAnimation::findAnimation(const std::string &name) const {
-		return _skeleton->getData()->findAnimation(name.c_str());
+		return _skeleton->getData().findAnimation(name.c_str());
 	}
 
 	TrackEntry *SkeletonAnimation::getCurrent(int trackIndex) {
-		return _state->getCurrent(trackIndex);
+		return _state->getTrack(trackIndex);
 	}
 
 	void SkeletonAnimation::clearTracks() {
@@ -326,3 +328,4 @@ namespace spine {
 	}
 
 }// namespace spine
+

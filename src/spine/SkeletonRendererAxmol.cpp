@@ -59,31 +59,31 @@ namespace spine {
 #define VLA_FREE(arr)
 #endif
 
-	SkeletonRenderer *SkeletonRenderer::createWithSkeleton(Skeleton *skeleton, bool ownsSkeleton, bool ownsSkeletonData) {
-		SkeletonRenderer *node = new SkeletonRenderer(skeleton, ownsSkeleton, ownsSkeletonData);
+	SkeletonRendererAxmol *SkeletonRendererAxmol::createWithSkeleton(Skeleton *skeleton, bool ownsSkeleton, bool ownsSkeletonData) {
+		SkeletonRendererAxmol *node = new SkeletonRendererAxmol(skeleton, ownsSkeleton, ownsSkeletonData);
 		node->autorelease();
 		return node;
 	}
 
-	SkeletonRenderer *SkeletonRenderer::createWithData(SkeletonData *skeletonData, bool ownsSkeletonData) {
-		SkeletonRenderer *node = new SkeletonRenderer(skeletonData, ownsSkeletonData);
+	SkeletonRendererAxmol *SkeletonRendererAxmol::createWithData(SkeletonData *skeletonData, bool ownsSkeletonData) {
+		SkeletonRendererAxmol *node = new SkeletonRendererAxmol(skeletonData, ownsSkeletonData);
 		node->autorelease();
 		return node;
 	}
 
-	SkeletonRenderer *SkeletonRenderer::createWithFile(const std::string &skeletonDataFile, Atlas *atlas, float scale) {
-		SkeletonRenderer *node = new SkeletonRenderer(skeletonDataFile, atlas, scale);
+	SkeletonRendererAxmol *SkeletonRendererAxmol::createWithFile(const std::string &skeletonDataFile, Atlas *atlas, float scale) {
+		SkeletonRendererAxmol *node = new SkeletonRendererAxmol(skeletonDataFile, atlas, scale);
 		node->autorelease();
 		return node;
 	}
 
-	SkeletonRenderer *SkeletonRenderer::createWithFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale) {
-		SkeletonRenderer *node = new SkeletonRenderer(skeletonDataFile, atlasFile, scale);
+	SkeletonRendererAxmol *SkeletonRendererAxmol::createWithFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale) {
+		SkeletonRendererAxmol *node = new SkeletonRendererAxmol(skeletonDataFile, atlasFile, scale);
 		node->autorelease();
 		return node;
 	}
 
-	void SkeletonRenderer::initialize() {
+	void SkeletonRendererAxmol::initialize() {
 		_clipper = new (__FILE__, __LINE__) SkeletonClipping();
 
 		_blendFunc = BlendFunc::ALPHA_PREMULTIPLIED;
@@ -91,48 +91,49 @@ namespace spine {
 
 		setTwoColorTint(false);
 
-		_skeleton->setToSetupPose();
+		_skeleton->setupPose();
 		_skeleton->updateWorldTransform(Physics_Update);
 	}
 
-	void SkeletonRenderer::setSkeletonData(SkeletonData *skeletonData, bool ownsSkeletonData) {
-		_skeleton = new (__FILE__, __LINE__) Skeleton(skeletonData);
-		_ownsSkeletonData = ownsSkeletonData;
+	void SkeletonRendererAxmol::setSkeletonData(SkeletonData *skeletonData, bool ownsSkeletonData) {
+        _skeletonData = skeletonData;
+        _ownsSkeletonData = ownsSkeletonData;
+		_skeleton = new (__FILE__, __LINE__) Skeleton(*skeletonData);
 	}
 
-	SkeletonRenderer::SkeletonRenderer()
+	SkeletonRendererAxmol::SkeletonRendererAxmol()
 		: _atlas(nullptr), _attachmentLoader(nullptr), _timeScale(1), _debugSlots(false), _debugBones(false), _debugMeshes(false), _debugBoundingRect(false), _startSlotIndex(0), _endSlotIndex(std::numeric_limits<int>::max()) {
 	}
 
-	SkeletonRenderer::SkeletonRenderer(Skeleton *skeleton, bool ownsSkeleton, bool ownsSkeletonData, bool ownsAtlas)
+	SkeletonRendererAxmol::SkeletonRendererAxmol(Skeleton *skeleton, bool ownsSkeleton, bool ownsSkeletonData, bool ownsAtlas)
 		: _atlas(nullptr), _attachmentLoader(nullptr), _timeScale(1), _debugSlots(false), _debugBones(false), _debugMeshes(false), _debugBoundingRect(false), _startSlotIndex(0), _endSlotIndex(std::numeric_limits<int>::max()) {
 		initWithSkeleton(skeleton, ownsSkeleton, ownsSkeletonData, ownsAtlas);
 	}
 
-	SkeletonRenderer::SkeletonRenderer(SkeletonData *skeletonData, bool ownsSkeletonData)
+	SkeletonRendererAxmol::SkeletonRendererAxmol(SkeletonData *skeletonData, bool ownsSkeletonData)
 		: _atlas(nullptr), _attachmentLoader(nullptr), _timeScale(1), _debugSlots(false), _debugBones(false), _debugMeshes(false), _debugBoundingRect(false), _startSlotIndex(0), _endSlotIndex(std::numeric_limits<int>::max()) {
 		initWithData(skeletonData, ownsSkeletonData);
 	}
 
-	SkeletonRenderer::SkeletonRenderer(const std::string &skeletonDataFile, Atlas *atlas, float scale)
+	SkeletonRendererAxmol::SkeletonRendererAxmol(const std::string &skeletonDataFile, Atlas *atlas, float scale)
 		: _atlas(nullptr), _attachmentLoader(nullptr), _timeScale(1), _debugSlots(false), _debugBones(false), _debugMeshes(false), _debugBoundingRect(false), _startSlotIndex(0), _endSlotIndex(std::numeric_limits<int>::max()) {
 		initWithJsonFile(skeletonDataFile, atlas, scale);
 	}
 
-	SkeletonRenderer::SkeletonRenderer(const std::string &skeletonDataFile, const std::string &atlasFile, float scale)
+	SkeletonRendererAxmol::SkeletonRendererAxmol(const std::string &skeletonDataFile, const std::string &atlasFile, float scale)
 		: _atlas(nullptr), _attachmentLoader(nullptr), _timeScale(1), _debugSlots(false), _debugBones(false), _debugMeshes(false), _debugBoundingRect(false), _startSlotIndex(0), _endSlotIndex(std::numeric_limits<int>::max()) {
 		initWithJsonFile(skeletonDataFile, atlasFile, scale);
 	}
 
-	SkeletonRenderer::~SkeletonRenderer() {
-		if (_ownsSkeletonData) delete _skeleton->getData();
+	SkeletonRendererAxmol::~SkeletonRendererAxmol() {
 		if (_ownsSkeleton) delete _skeleton;
+        if (_ownsSkeletonData) delete _skeletonData;
 		if (_ownsAtlas && _atlas) delete _atlas;
 		if (_attachmentLoader) delete _attachmentLoader;
 		delete _clipper;
 	}
 
-	void SkeletonRenderer::initWithSkeleton(Skeleton *skeleton, bool ownsSkeleton, bool ownsSkeletonData, bool ownsAtlas) {
+	void SkeletonRendererAxmol::initWithSkeleton(Skeleton *skeleton, bool ownsSkeleton, bool ownsSkeletonData, bool ownsAtlas) {
 		_skeleton = skeleton;
 		_ownsSkeleton = ownsSkeleton;
 		_ownsSkeletonData = ownsSkeletonData;
@@ -140,17 +141,17 @@ namespace spine {
 		initialize();
 	}
 
-	void SkeletonRenderer::initWithData(SkeletonData *skeletonData, bool ownsSkeletonData) {
+	void SkeletonRendererAxmol::initWithData(SkeletonData *skeletonData, bool ownsSkeletonData) {
 		_ownsSkeleton = true;
 		setSkeletonData(skeletonData, ownsSkeletonData);
 		initialize();
 	}
 
-	void SkeletonRenderer::initWithJsonFile(const std::string &skeletonDataFile, Atlas *atlas, float scale) {
+	void SkeletonRendererAxmol::initWithJsonFile(const std::string &skeletonDataFile, Atlas *atlas, float scale) {
 		_atlas = atlas;
 		_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
-		SkeletonJson json(_attachmentLoader);
+		SkeletonJson json(*_attachmentLoader);
 		json.setScale(scale);
 		SkeletonData *skeletonData = json.readSkeletonDataFile(skeletonDataFile.c_str());
 		AXASSERT(skeletonData, (!json.getError().isEmpty() ? json.getError().buffer() : "Error reading skeleton data."));
@@ -161,29 +162,30 @@ namespace spine {
 		initialize();
 	}
 
-	void SkeletonRenderer::initWithJsonFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale) {
+	void SkeletonRendererAxmol::initWithJsonFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale) {
 		_atlas = new (__FILE__, __LINE__) Atlas(atlasFile.c_str(), AxmolTextureLoader::getInstance(), true);
 		AXASSERT(_atlas, "Error reading atlas file.");
 
 		_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
-		SkeletonJson json(_attachmentLoader);
+		SkeletonJson json(*_attachmentLoader);
 		json.setScale(scale);
 		SkeletonData *skeletonData = json.readSkeletonDataFile(skeletonDataFile.c_str());
 		AXASSERT(skeletonData, (!json.getError().isEmpty() ? json.getError().buffer() : "Error reading skeleton data."));
 
 		_ownsSkeleton = true;
 		_ownsAtlas = true;
+        _skeletonData = skeletonData;
 		setSkeletonData(skeletonData, true);
 
 		initialize();
 	}
 
-	void SkeletonRenderer::initWithBinaryFile(const std::string &skeletonDataFile, Atlas *atlas, float scale) {
+	void SkeletonRendererAxmol::initWithBinaryFile(const std::string &skeletonDataFile, Atlas *atlas, float scale) {
 		_atlas = atlas;
 		_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
-		SkeletonBinary binary(_attachmentLoader);
+		SkeletonBinary binary(*_attachmentLoader);
 		binary.setScale(scale);
 		SkeletonData *skeletonData = binary.readSkeletonDataFile(skeletonDataFile.c_str());
 		AXASSERT(skeletonData, (!binary.getError().isEmpty() ? binary.getError().buffer() : "Error reading skeleton data."));
@@ -193,13 +195,13 @@ namespace spine {
 		initialize();
 	}
 
-	void SkeletonRenderer::initWithBinaryFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale) {
+	void SkeletonRendererAxmol::initWithBinaryFile(const std::string &skeletonDataFile, const std::string &atlasFile, float scale) {
  		_atlas = new (__FILE__, __LINE__) Atlas(atlasFile.c_str(), AxmolTextureLoader::getInstance(), true);
 		AXASSERT(_atlas, "Error reading atlas file.");
 
 		_attachmentLoader = new (__FILE__, __LINE__) AxmolAtlasAttachmentLoader(_atlas);
 
-		SkeletonBinary binary(_attachmentLoader);
+		SkeletonBinary binary(*_attachmentLoader);
 		binary.setScale(scale);
 		SkeletonData *skeletonData = binary.readSkeletonDataFile(skeletonDataFile.c_str());
 		AXASSERT(skeletonData, (!binary.getError().isEmpty() ? binary.getError().buffer() : "Error reading skeleton data."));
@@ -211,11 +213,11 @@ namespace spine {
 	}
 
 
-	void SkeletonRenderer::update(float deltaTime) {
+	void SkeletonRendererAxmol::update(float deltaTime) {
 		Node::update(deltaTime);
 	}
 
-	void SkeletonRenderer::draw(Renderer *renderer, const Mat4 &transform, uint32_t transformFlags) {
+	void SkeletonRendererAxmol::draw(Renderer *renderer, const Mat4 &transform, uint32_t transformFlags) {
 		// Early exit if the skeleton is invisible.
 		if (getDisplayedOpacity() == 0 || _skeleton->getColor().a == 0) {
 			return;
@@ -256,21 +258,27 @@ namespace spine {
 		const float darkPremultipliedAlpha = _premultipliedAlpha ? 1.f : 0;
 		TwoColorTrianglesCommand *lastTwoColorTrianglesCommand = nullptr;
 		for (int i = 0, n = (int)_skeleton->getSlots().size(); i < n; ++i) {
-			Slot *slot = _skeleton->getDrawOrder()[i];
-
-			if (nothingToDraw(*slot, _startSlotIndex, _endSlotIndex)) {
-				_clipper->clipEnd(*slot);
+			Slot& slot = *_skeleton->getDrawOrder().getAppliedPose()[i];
+			auto &slotPose = slot.getAppliedPose();
+			if (nothingToDraw(slot, _startSlotIndex, _endSlotIndex)) {
+				_clipper->clipEnd(slot);
 				continue;
 			}
 
-			axmol::TrianglesCommand::Triangles triangles;
-			TwoColorTriangles trianglesTwoColor;
+            axmol::TrianglesCommand::Triangles triangles;
+            TwoColorTriangles trianglesTwoColor;
             static unsigned short quadIndices[6] = {0, 1, 2, 2, 3, 0};
             Texture2D *texture = nullptr;
-
-			if (slot->getAttachment()->getRTTI().isExactly(RegionAttachment::rtti)) {
-				RegionAttachment *attachment = static_cast<RegionAttachment *>(slot->getAttachment());
-				texture = (Texture2D*)((AtlasRegion*)attachment->getRegion())->page->texture;
+			float *attachmentUVs = nullptr;
+            if (slotPose.getAttachment()->getRTTI().isExactly(RegionAttachment::rtti))
+            {
+                RegionAttachment* attachment = static_cast<RegionAttachment*>(slotPose.getAttachment());
+                auto& sequence          = attachment->getSequence();
+                const int sequenceIndex = sequence.resolveIndex(slotPose);
+                auto region   = sequence.getRegion(sequenceIndex);
+                texture = static_cast<ax::Texture2D*>(region->getRendererObject());
+                auto& uvs               = sequence.getUVs(sequenceIndex);
+				attachmentUVs           = uvs.buffer();
 
 				float *dstTriangleVertices = nullptr;
 				int dstStride = 0;// in floats
@@ -282,8 +290,8 @@ namespace spine {
 					assert(triangles.vertCount == 4);
                     for (int v = 0, i = 0; v < triangles.vertCount; v++, i += 2) {
                         auto &texCoords = triangles.verts[v].texCoord;
-                        texCoords.u = attachment->getUVs()[i];
-                        texCoords.v = attachment->getUVs()[i + 1];
+                        texCoords.u     = uvs[i];
+                        texCoords.v     = uvs[i + 1];
                     }
 					dstStride = sizeof(V3F_T2F_C4B) / sizeof(float);
 					dstTriangleVertices = reinterpret_cast<float *>(triangles.verts);
@@ -295,8 +303,8 @@ namespace spine {
 					assert(trianglesTwoColor.vertCount == 4);
                     for (int v = 0, i = 0; v < trianglesTwoColor.vertCount; v++, i += 2) {
                         auto &texCoords = trianglesTwoColor.verts[v].texCoord;
-                        texCoords.u = attachment->getUVs()[i];
-                        texCoords.v = attachment->getUVs()[i + 1];
+                        texCoords.u = uvs[i];
+                        texCoords.v = uvs[i + 1];
                     }
 					dstTriangleVertices = reinterpret_cast<float *>(trianglesTwoColor.verts);
 					dstStride = sizeof(V3F_C4B_C4B_T2F) / sizeof(float);
@@ -306,9 +314,14 @@ namespace spine {
 				worldCoordPtr += 8;
 
 				color = attachment->getColor();
-			} else if (slot->getAttachment()->getRTTI().isExactly(MeshAttachment::rtti)) {
-				MeshAttachment *attachment = (MeshAttachment *) slot->getAttachment();
-				texture = (Texture2D*)((AtlasRegion*)attachment->getRegion())->page->texture;
+			} else if (slotPose.getAttachment()->getRTTI().isExactly(MeshAttachment::rtti)) {
+				MeshAttachment *attachment = (MeshAttachment *) slotPose.getAttachment();
+                auto& sequence             = attachment->getSequence();
+                const int sequenceIndex    = sequence.resolveIndex(slotPose);
+                auto region                = sequence.getRegion(sequenceIndex);
+                texture                    = static_cast<ax::Texture2D*>(region->getRendererObject());
+                auto& uvs                  = sequence.getUVs(sequenceIndex);
+				attachmentUVs              = uvs.buffer();
 
 				float *dstTriangleVertices = nullptr;
 				int dstStride = 0;// in floats
@@ -320,8 +333,8 @@ namespace spine {
 					triangles.vertCount = (int)attachment->getWorldVerticesLength() / 2;
                     for (int v = 0, i = 0; v < triangles.vertCount; v++, i += 2) {
                         auto &texCoords = triangles.verts[v].texCoord;
-                        texCoords.u = attachment->getUVs()[i];
-                        texCoords.v = attachment->getUVs()[i + 1];
+                        texCoords.u = uvs[i];
+                        texCoords.v = uvs[i + 1];
                     }
 					dstTriangleVertices = (float *) triangles.verts;
 					dstStride = sizeof(V3F_T2F_C4B) / sizeof(float);
@@ -333,8 +346,8 @@ namespace spine {
 					trianglesTwoColor.vertCount = (int)attachment->getWorldVerticesLength() / 2;
                     for (int v = 0, i = 0; v < trianglesTwoColor.vertCount; v++, i += 2) {
                         auto &texCoords = trianglesTwoColor.verts[v].texCoord;
-                        texCoords.u = attachment->getUVs()[i];
-                        texCoords.v = attachment->getUVs()[i + 1];
+                        texCoords.u = uvs[i];
+                        texCoords.v = uvs[i + 1];
                     }
 					dstTriangleVertices = (float *) trianglesTwoColor.verts;
 					dstStride = sizeof(V3F_C4B_C4B_T2F) / sizeof(float);
@@ -347,17 +360,17 @@ namespace spine {
 				worldCoordPtr += dstVertexCount * 2;
 
 				color = attachment->getColor();
-			} else if (slot->getAttachment()->getRTTI().isExactly(ClippingAttachment::rtti)) {
-				ClippingAttachment *clip = (ClippingAttachment *) slot->getAttachment();
-				_clipper->clipStart(*slot, clip);
+			} else if (slotPose.getAttachment()->getRTTI().isExactly(ClippingAttachment::rtti)) {
+				ClippingAttachment *clip = (ClippingAttachment *) slotPose.getAttachment();
+				_clipper->clipStart(*_skeleton, slot, clip);
 				continue;
 			} else {
-				_clipper->clipEnd(*slot);
+				_clipper->clipEnd(slot);
 				continue;
 			}
 
-			if (slot->hasDarkColor()) {
-				darkColor = slot->getDarkColor();
+			if (slotPose.hasDarkColor()) {
+                darkColor = slotPose.getDarkColor();
 			} else {
 				darkColor.r = 0;
 				darkColor.g = 0;
@@ -365,14 +378,14 @@ namespace spine {
 			}
 			darkColor.a = darkPremultipliedAlpha;
 
-			color.a *= nodeColor.a * _skeleton->getColor().a * slot->getColor().a;
+			color.a *= nodeColor.a * _skeleton->getColor().a * slotPose.getColor().a;
 			if (color.a == 0) {
-				_clipper->clipEnd(*slot);
+				_clipper->clipEnd(slot);
 				continue;
 			}
-			color.r *= nodeColor.r * _skeleton->getColor().r * slot->getColor().r;
-			color.g *= nodeColor.g * _skeleton->getColor().g * slot->getColor().g;
-			color.b *= nodeColor.b * _skeleton->getColor().b * slot->getColor().b;
+			color.r *= nodeColor.r * _skeleton->getColor().r * slotPose.getColor().r;
+			color.g *= nodeColor.g * _skeleton->getColor().g * slotPose.getColor().g;
+			color.b *= nodeColor.b * _skeleton->getColor().b * slotPose.getColor().b;
 			if (_premultipliedAlpha) {
 				color.r *= color.a;
 				color.g *= color.a;
@@ -381,16 +394,16 @@ namespace spine {
 
 			const ax::Color32 color_r{color};
             const ax::Color32 darkColor_r{darkColor};
-			const BlendFunc blendFunc = makeBlendFunc(slot->getData().getBlendMode(), texture->hasPremultipliedAlpha());
+			const BlendFunc blendFunc = makeBlendFunc(slot.getData().getBlendMode(), texture->hasPremultipliedAlpha());
 			_blendFunc = blendFunc;
 
 			if (hasSingleTint) {
 				if (_clipper->isClipping()) {
-					_clipper->clipTriangles((float *) &triangles.verts[0].position, triangles.indices, triangles.indexCount, (float *) &triangles.verts[0].texCoord, sizeof(axmol::V3F_T2F_C4B) / 4);
+					_clipper->clipTriangles((float *) &triangles.verts[0].position, triangles.indices, triangles.indexCount, attachmentUVs, sizeof(axmol::V3F_T2F_C4B) / 4);
 					batch->deallocateVertices(triangles.vertCount);
 
 					if (_clipper->getClippedTriangles().size() == 0) {
-						_clipper->clipEnd(*slot);
+						_clipper->clipEnd(slot);
 						continue;
 					}
 
@@ -427,11 +440,11 @@ namespace spine {
 				// Two color tinting.
 
 				if (_clipper->isClipping()) {
-					_clipper->clipTriangles((float *) &trianglesTwoColor.verts[0].position, trianglesTwoColor.indices, trianglesTwoColor.indexCount, (float *) &trianglesTwoColor.verts[0].texCoord, sizeof(V3F_C4B_C4B_T2F) / 4);
+					_clipper->clipTriangles((float *) &trianglesTwoColor.verts[0].position, trianglesTwoColor.indices, trianglesTwoColor.indexCount, attachmentUVs, sizeof(V3F_C4B_C4B_T2F) / 4);
 					twoColorBatch->deallocateVertices(trianglesTwoColor.vertCount);
 
 					if (_clipper->getClippedTriangles().size() == 0) {
-						_clipper->clipEnd(*slot);
+						_clipper->clipEnd(slot);
 						continue;
 					}
 
@@ -466,7 +479,7 @@ namespace spine {
                     lastTwoColorTrianglesCommand = twoColorBatch->addCommand(renderer, _globalZOrder, texture, _programState, blendFunc, trianglesTwoColor, transform, transformFlags);
 				}
 			}
-			_clipper->clipEnd(*slot);
+			_clipper->clipEnd(slot);
 		}
 		_clipper->clipEnd();
 
@@ -493,8 +506,8 @@ namespace spine {
 				if (!sibling) {
 					lastTwoColorTrianglesCommand->setForceFlush(true);
 				} else {
-					SkeletonRenderer *siblingSkeleton = dynamic_cast<SkeletonRenderer *>(sibling);
-					if (!siblingSkeleton ||                                               // flush is next sibling isn't a SkeletonRenderer
+					SkeletonRendererAxmol *siblingSkeleton = dynamic_cast<SkeletonRendererAxmol *>(sibling);
+					if (!siblingSkeleton ||                                               // flush is next sibling isn't a SkeletonRendererAxmol
 						!siblingSkeleton->isTwoColorTint() ||                             // flush if next sibling isn't two color tinted
 						!siblingSkeleton->isVisible() ||                                  // flush if next sibling is two color tinted but not visible
 						(siblingSkeleton->getGlobalZOrder() != this->getGlobalZOrder())) {// flush if next sibling is two color tinted but z-order differs
@@ -512,7 +525,7 @@ namespace spine {
 	}
 
 
-	void SkeletonRenderer::drawDebug(Renderer *renderer, const Mat4 &transform, uint32_t transformFlags) {
+	void SkeletonRendererAxmol::drawDebug(Renderer *renderer, const Mat4 &transform, uint32_t transformFlags) {
 
 #if !defined(USE_MATRIX_STACK_PROJECTION_ONLY)
 		Director *director = Director::getInstance();
@@ -538,18 +551,18 @@ namespace spine {
 		if (_debugSlots) {
 			// Slots.
 			for (int i = 0, n = (int)_skeleton->getSlots().size(); i < n; i++) {
-				Slot *slot = _skeleton->getDrawOrder()[i];
-
+                Slot* slot        = _skeleton->getDrawOrder().getAppliedPose()[i];
+                auto& slotPose = slot->getAppliedPose();
 				if (!slot->getBone().isActive()) continue;
-				if (!slot->getAttachment() || !slot->getAttachment()->getRTTI().isExactly(RegionAttachment::rtti)) continue;
+				if (!slotPose.getAttachment() || !slotPose.getAttachment()->getRTTI().isExactly(RegionAttachment::rtti)) continue;
 
 				if (slotIsOutRange(*slot, _startSlotIndex, _endSlotIndex)) {
 					continue;
 				}
 
-				RegionAttachment *attachment = (RegionAttachment *) slot->getAttachment();
+				RegionAttachment* attachment = (RegionAttachment*)slotPose.getAttachment();
 				float worldVertices[8];
-				attachment->computeWorldVertices(*slot, worldVertices, 0, 2);
+				attachment->computeWorldVertices(*slot, attachment->getOffsets(slotPose).buffer(), worldVertices, 0, 2);
 				const Vec2 points[4] =
 						{
 								{worldVertices[0], worldVertices[1]},
@@ -565,16 +578,18 @@ namespace spine {
 			for (int i = 0, n = (int)_skeleton->getBones().size(); i < n; i++) {
 				Bone *bone = _skeleton->getBones()[i];
 				if (!bone->isActive()) continue;
-				float x = bone->getData().getLength() * bone->getA() + bone->getWorldX();
-				float y = bone->getData().getLength() * bone->getC() + bone->getWorldY();
-				drawNode->drawLine(Vec2(bone->getWorldX(), bone->getWorldY()), Vec2(x, y), ax::Color::RED, 2.0f);
+				auto &bonePose = bone->getAppliedPose();
+				float x = bone->getData().getLength() * bonePose.getA() + bonePose.getWorldX();
+				float y = bone->getData().getLength() * bonePose.getC() + bonePose.getWorldY();
+				drawNode->drawLine(Vec2(bonePose.getWorldX(), bonePose.getWorldY()), Vec2(x, y), ax::Color::RED, 2.0f);
 			}
 			// Bone origins.
             auto color = ax::Color::BLUE;  // Root bone is blue.
 			for (int i = 0, n = (int)_skeleton->getBones().size(); i < n; i++) {
 				Bone *bone = _skeleton->getBones()[i];
 				if (!bone->isActive()) continue;
-				drawNode->drawPoint(Vec2(bone->getWorldX(), bone->getWorldY()), 4, color);
+				auto &bonePose = bone->getAppliedPose();
+				drawNode->drawPoint(Vec2(bonePose.getWorldX(), bonePose.getWorldY()), 4, color);
 				if (i == 0) color = ax::Color::GREEN;
 			}
 		}
@@ -582,12 +597,13 @@ namespace spine {
 		if (_debugMeshes) {
 			// Meshes.
 			for (int i = 0, n = (int)_skeleton->getSlots().size(); i < n; ++i) {
-				Slot *slot = _skeleton->getDrawOrder()[i];
+				Slot *slot = _skeleton->getDrawOrder().getAppliedPose()[i];
+                auto& slotPose = slot->getAppliedPose();
 				if (!slot->getBone().isActive()) continue;
-				if (!slot->getAttachment() || !slot->getAttachment()->getRTTI().isExactly(MeshAttachment::rtti)) continue;
-				MeshAttachment *const mesh = static_cast<MeshAttachment *>(slot->getAttachment());
+				if (!slotPose.getAttachment() || !slotPose.getAttachment()->getRTTI().isExactly(MeshAttachment::rtti)) continue;
+				MeshAttachment *const mesh = static_cast<MeshAttachment *>(slotPose.getAttachment());
 				VLA(float, worldCoord, mesh->getWorldVerticesLength());
-				mesh->computeWorldVertices(*slot, 0, mesh->getWorldVerticesLength(), worldCoord, 0, 2);
+				mesh->computeWorldVertices(*_skeleton, * slot, 0, mesh->getWorldVerticesLength(), worldCoord, 0, 2);
 				for (size_t t = 0; t < mesh->getTriangles().size(); t += 3) {
 					// Fetch triangle indices
 					const int idx0 = mesh->getTriangles()[t + 0];
@@ -610,7 +626,7 @@ namespace spine {
 #endif
 	}
 
-	axmol::Rect SkeletonRenderer::getBoundingBox() const {
+	axmol::Rect SkeletonRendererAxmol::getBoundingBox() const {
 		const int coordCount = computeTotalCoordCount(*_skeleton, _startSlotIndex, _endSlotIndex);
 		if (coordCount == 0) return {0, 0, 0, 0};
 		VLA(float, worldCoords, coordCount);
@@ -622,127 +638,127 @@ namespace spine {
 
 	// --- Convenience methods for Skeleton_* functions.
 
-	void SkeletonRenderer::updateWorldTransform(Physics physics) {
+	void SkeletonRendererAxmol::updateWorldTransform(Physics physics) {
 		_skeleton->updateWorldTransform(physics);
 	}
 
-	void SkeletonRenderer::setToSetupPose() {
-		_skeleton->setToSetupPose();
+	void SkeletonRendererAxmol::setToSetupPose() {
+		_skeleton->setupPose();
 	}
-	void SkeletonRenderer::setBonesToSetupPose() {
-		_skeleton->setBonesToSetupPose();
+	void SkeletonRendererAxmol::setBonesToSetupPose() {
+		_skeleton->setupPoseBones();
 	}
-	void SkeletonRenderer::setSlotsToSetupPose() {
-		_skeleton->setSlotsToSetupPose();
+	void SkeletonRendererAxmol::setSlotsToSetupPose() {
+		_skeleton->setupPoseSlots();
 	}
 
-	Bone *SkeletonRenderer::findBone(const std::string &boneName) const {
+	Bone *SkeletonRendererAxmol::findBone(const std::string &boneName) const {
 		return _skeleton->findBone(boneName.c_str());
 	}
 
-	Slot *SkeletonRenderer::findSlot(const std::string &slotName) const {
+	Slot *SkeletonRendererAxmol::findSlot(const std::string &slotName) const {
 		return _skeleton->findSlot(slotName.c_str());
 	}
 
-	void SkeletonRenderer::setSkin(const std::string &skinName) {
+	void SkeletonRendererAxmol::setSkin(const std::string &skinName) {
 		_skeleton->setSkin(skinName.empty() ? 0 : skinName.c_str());
 	}
-	void SkeletonRenderer::setSkin(const char *skinName) {
+	void SkeletonRendererAxmol::setSkin(const char *skinName) {
 		_skeleton->setSkin(skinName);
 	}
 
-	Attachment *SkeletonRenderer::getAttachment(const std::string &slotName, const std::string &attachmentName) const {
+	Attachment *SkeletonRendererAxmol::getAttachment(const std::string &slotName, const std::string &attachmentName) const {
 		return _skeleton->getAttachment(slotName.c_str(), attachmentName.c_str());
 	}
-	bool SkeletonRenderer::setAttachment(const std::string &slotName, const std::string &attachmentName) {
+	bool SkeletonRendererAxmol::setAttachment(const std::string &slotName, const std::string &attachmentName) {
 		bool result = _skeleton->getAttachment(slotName.c_str(), attachmentName.empty() ? 0 : attachmentName.c_str()) ? true : false;
 		_skeleton->setAttachment(slotName.c_str(), attachmentName.empty() ? 0 : attachmentName.c_str());
 		return result;
 	}
-	bool SkeletonRenderer::setAttachment(const std::string &slotName, const char *attachmentName) {
+	bool SkeletonRendererAxmol::setAttachment(const std::string &slotName, const char *attachmentName) {
 		bool result = _skeleton->getAttachment(slotName.c_str(), attachmentName) ? true : false;
 		_skeleton->setAttachment(slotName.c_str(), attachmentName);
 		return result;
 	}
 
-	void SkeletonRenderer::setTwoColorTint(bool enabled) {
+	void SkeletonRendererAxmol::setTwoColorTint(bool enabled) {
 		_twoColorTint = enabled;
 	}
 
-	bool SkeletonRenderer::isTwoColorTint() {
+	bool SkeletonRendererAxmol::isTwoColorTint() {
 		return _twoColorTint;
 	}
 
-	void SkeletonRenderer::setSlotsRange(int startSlotIndex, int endSlotIndex) {
+	void SkeletonRendererAxmol::setSlotsRange(int startSlotIndex, int endSlotIndex) {
 		_startSlotIndex = startSlotIndex == -1 ? 0 : startSlotIndex;
 		_endSlotIndex = endSlotIndex == -1 ? std::numeric_limits<int>::max() : endSlotIndex;
 	}
 
-	Skeleton *SkeletonRenderer::getSkeleton() const {
+	Skeleton *SkeletonRendererAxmol::getSkeleton() const {
 		return _skeleton;
 	}
 
-	void SkeletonRenderer::setTimeScale(float scale) {
+	void SkeletonRendererAxmol::setTimeScale(float scale) {
 		_timeScale = scale;
 	}
-	float SkeletonRenderer::getTimeScale() const {
+	float SkeletonRendererAxmol::getTimeScale() const {
 		return _timeScale;
 	}
 
-	void SkeletonRenderer::setDebugSlotsEnabled(bool enabled) {
+	void SkeletonRendererAxmol::setDebugSlotsEnabled(bool enabled) {
 		_debugSlots = enabled;
 	}
-	bool SkeletonRenderer::getDebugSlotsEnabled() const {
+	bool SkeletonRendererAxmol::getDebugSlotsEnabled() const {
 		return _debugSlots;
 	}
 
-	void SkeletonRenderer::setDebugBonesEnabled(bool enabled) {
+	void SkeletonRendererAxmol::setDebugBonesEnabled(bool enabled) {
 		_debugBones = enabled;
 	}
-	bool SkeletonRenderer::getDebugBonesEnabled() const {
+	bool SkeletonRendererAxmol::getDebugBonesEnabled() const {
 		return _debugBones;
 	}
 
-	void SkeletonRenderer::setDebugMeshesEnabled(bool enabled) {
+	void SkeletonRendererAxmol::setDebugMeshesEnabled(bool enabled) {
 		_debugMeshes = enabled;
 	}
-	bool SkeletonRenderer::getDebugMeshesEnabled() const {
+	bool SkeletonRendererAxmol::getDebugMeshesEnabled() const {
 		return _debugMeshes;
 	}
 
-	void SkeletonRenderer::setDebugBoundingRectEnabled(bool enabled) {
+	void SkeletonRendererAxmol::setDebugBoundingRectEnabled(bool enabled) {
 		_debugBoundingRect = enabled;
 	}
 
-	bool SkeletonRenderer::getDebugBoundingRectEnabled() const {
+	bool SkeletonRendererAxmol::getDebugBoundingRectEnabled() const {
 		return _debugBoundingRect;
 	}
 
-	void SkeletonRenderer::onEnter() {
+	void SkeletonRendererAxmol::onEnter() {
 		Node::onEnter();
 		scheduleUpdate();
 	}
 
-	void SkeletonRenderer::onExit() {
+	void SkeletonRendererAxmol::onExit() {
 		Node::onExit();
 		unscheduleUpdate();
 	}
 
 	// --- CCBlendProtocol
 
-	const BlendFunc &SkeletonRenderer::getBlendFunc() const {
+	const BlendFunc &SkeletonRendererAxmol::getBlendFunc() const {
 		return _blendFunc;
 	}
 
-	void SkeletonRenderer::setBlendFunc(const BlendFunc &blendFunc) {
+	void SkeletonRendererAxmol::setBlendFunc(const BlendFunc &blendFunc) {
 		_blendFunc = blendFunc;
 	}
 
-	void SkeletonRenderer::setOpacityModifyRGB(bool value) {
+	void SkeletonRendererAxmol::setOpacityModifyRGB(bool value) {
 		_premultipliedAlpha = value;
 	}
 
-	bool SkeletonRenderer::isOpacityModifyRGB() const {
+	bool SkeletonRendererAxmol::isOpacityModifyRGB() const {
 		return _premultipliedAlpha;
 	}
 
@@ -774,7 +790,8 @@ namespace spine {
 		}
 
 		bool nothingToDraw(Slot &slot, int startSlotIndex, int endSlotIndex) {
-			Attachment *attachment = slot.getAttachment();
+			auto &slotPose = slot.getAppliedPose();
+			Attachment *attachment = slotPose.getAttachment();
 			if (!attachment ||
 				slotIsOutRange(slot, startSlotIndex, endSlotIndex) ||
 				!slot.getBone().isActive())
@@ -782,7 +799,7 @@ namespace spine {
 			const auto &attachmentRTTI = attachment->getRTTI();
 			if (attachmentRTTI.isExactly(ClippingAttachment::rtti))
 				return false;
-			if (slot.getColor().a == 0)
+			if (slotPose.getColor().a == 0)
 				return true;
 			if (attachmentRTTI.isExactly(RegionAttachment::rtti)) {
 				if (static_cast<RegionAttachment *>(attachment)->getColor().a == 0)
@@ -801,7 +818,8 @@ namespace spine {
 				if (nothingToDraw(slot, startSlotIndex, endSlotIndex)) {
 					continue;
 				}
-				Attachment *const attachment = slot.getAttachment();
+				auto &slotPose = slot.getAppliedPose();
+				Attachment *const attachment = slotPose.getAttachment();
 				if (attachment->getRTTI().isExactly(RegionAttachment::rtti)) {
 					coordCount += 8;
 				} else if (attachment->getRTTI().isExactly(MeshAttachment::rtti)) {
@@ -819,20 +837,22 @@ namespace spine {
 			float *const dstEnd = dstCoord + coordCount;
 #endif
 			for (size_t i = 0; i < skeleton.getSlots().size(); ++i) {
-				/*const*/ Slot &slot = *skeleton.getDrawOrder()[i];// match the draw order of SkeletonRenderer::Draw
+				auto slot = *skeleton.getDrawOrder().getAppliedPose()[i];// match the draw order of SkeletonRendererAxmol::Draw
 				if (nothingToDraw(slot, startSlotIndex, endSlotIndex)) {
 					continue;
 				}
-				Attachment *const attachment = slot.getAttachment();
+
+                auto &slotPose = slot.getAppliedPose();
+				Attachment *const attachment = slotPose.getAttachment();
 				if (attachment->getRTTI().isExactly(RegionAttachment::rtti)) {
 					RegionAttachment *const regionAttachment = static_cast<RegionAttachment *>(attachment);
 					assert(dstPtr + 8 <= dstEnd);
-					regionAttachment->computeWorldVertices(slot, dstPtr, 0, 2);
+					regionAttachment->computeWorldVertices(slot, regionAttachment->getOffsets(slotPose).buffer(), dstPtr, 0, 2);
 					dstPtr += 8;
 				} else if (attachment->getRTTI().isExactly(MeshAttachment::rtti)) {
 					MeshAttachment *const mesh = static_cast<MeshAttachment *>(attachment);
 					assert(dstPtr + mesh->getWorldVerticesLength() <= dstEnd);
-					mesh->computeWorldVertices(slot, 0, mesh->getWorldVerticesLength(), dstPtr, 0, 2);
+					mesh->computeWorldVertices(skeleton, slot, 0, mesh->getWorldVerticesLength(), dstPtr, 0, 2);
 					dstPtr += mesh->getWorldVerticesLength();
 				}
 			}

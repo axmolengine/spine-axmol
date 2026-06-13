@@ -33,7 +33,7 @@
 USING_NS_AX;
 using namespace spine;
 
-AxmolAtlasAttachmentLoader::AxmolAtlasAttachmentLoader(Atlas *atlas) : AtlasAttachmentLoader(atlas) {
+AxmolAtlasAttachmentLoader::AxmolAtlasAttachmentLoader(Atlas *atlas) : AtlasAttachmentLoader(*atlas) {
 }
 
 AxmolAtlasAttachmentLoader::~AxmolAtlasAttachmentLoader() {}

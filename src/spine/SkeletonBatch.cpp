@@ -91,7 +91,7 @@ namespace spine {
             currentState         = programState->clone();
             command->_locMVP     = currentState->getUniformLocation(rhi::UNIFORM_NAME_MVP_MATRIX);
             command->_locTexture = currentState->getUniformLocation(rhi::UNIFORM_NAME_TEXTURE);
-            command->setOwnPSVL(currentState, currentState->getVertexLayout(), RenderCommand::ADOPT_FLAG_PS);
+            command->setOwnPSVL(currentState, currentState->getVertexLayout(), ax::RenderCommand::ADOPT_FLAG_PS);
         }
         return currentState;
     }
