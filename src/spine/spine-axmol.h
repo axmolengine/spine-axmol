@@ -30,22 +30,24 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef SPINE_AXMOL_H_
-#define SPINE_AXMOL_H_
+#pragma once
 
-#include "axmol/axmol.h"
-#include <spine/spine.h>
-
+#include <spine/Extension.h>
 #include <spine/SkeletonAnimation.h>
 #include <spine/SkeletonAssetCache.h>
-#include <spine/SkeletonBatch.h>
-#include <spine/SkeletonTwoColorBatch.h>
-
-#include <string_view>
 
 #define AX_SPINE_VERSION 0x040300
 
+namespace ax {
+	class EventListener;
+	class Renderer;
+}// namespace ax
+
 namespace spine {
+
+	class SkeletonBatch;
+	class SkeletonTwoColorBatch;
+
 	/**
      * @class AxmolSpineExtension
      * @brief Spine runtime extension for Axmol.
@@ -74,7 +76,7 @@ namespace spine {
 		void cleanup();
 
 		TextureLoader *_textureLoader{nullptr};
-		ax::EventListener *_disposeEventListener{nullptr};
+		ax::EventListener *_directorDisposingListener{nullptr};
 		ax::EventListener *_gfxDropListener{nullptr};
 		static AxmolSpineExtension *_instance;
 	};
@@ -84,5 +86,3 @@ namespace spine {
 	}
 
 }// namespace spine
-
-#endif /* SPINE_AXMOL_H_ */
