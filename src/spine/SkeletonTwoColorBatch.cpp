@@ -1,8 +1,11 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
  * Last updated April 5, 2025. Replaces all prior versions.
- *
+ * 
  * Copyright (c) 2013-2025, Esoteric Software LLC
+ * Copyright (c) 2019-present Axmol Engine contributors (see AUTHORS.md).
+ *
+ * https://axmol.dev/
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -187,15 +190,11 @@ namespace spine {
         // for the next frame
         _event1 = eventDispatcher->addCustomEventListener(Director::EVENT_AFTER_DRAW,
                                                 [](CustomEvent*) { s_TwoColorInstance->update(0); });
-
-        _event2 = eventDispatcher->addCustomEventListener(Director::EVENT_DESTROY,
-                                                [](CustomEvent*) { SkeletonTwoColorBatch::destroyInstance(); });
 	}
 
 	SkeletonTwoColorBatch::~SkeletonTwoColorBatch() {
         auto eventDispatcher = Director::getInstance()->getEventDispatcher();
         eventDispatcher->removeEventListener(_event1);
-        eventDispatcher->removeEventListener(_event2);
         for (auto& command : _commandsPool)
         {
             if (command)

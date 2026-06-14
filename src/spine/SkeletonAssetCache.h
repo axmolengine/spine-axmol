@@ -29,63 +29,68 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
+#pragma once
 
-#ifndef SPINE_SKELETONBATCH_H_
-#define SPINE_SKELETONBATCH_H_
-
-#include "axmol/axmol.h"
-
-#include "axmol/rhi/ProgramState.h"
-#include <spine/spine.h>
-#include <vector>
+#include "spine/spine.h"
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include "xxhash/xxhash.h"
+#include "axmol/base/Object.h"
 
 namespace spine {
-	struct SkeletonCommand : public axmol::TrianglesCommand {
-		axmol::rhi::UniformLocation _locMVP;
-		axmol::rhi::UniformLocation _locTexture;
-	};
-	class SP_API SkeletonBatch {
+
+	class SkeletonAssetCache;
+
+	class SP_API SkeletonAsset : public ax::Object {
 	public:
-		static SkeletonBatch *getInstance();
+		static SkeletonAsset *obtain(std::string_view dataFile,
+									 std::string_view atlasFile,
+									 float scale);
 
-		static void destroyInstance();
+		std::string_view getDataFile() const { return _dataFile; }
+		std::string_view getAtlasFile() const { return _atlasFile; }
+		float getScale() const { return _scale; }
 
-		void update(float delta);
-
-		axmol::V3F_T2F_C4B *allocateVertices(uint32_t numVertices);
-		void deallocateVertices(uint32_t numVertices);
-		unsigned short *allocateIndices(uint32_t numIndices);
-		void deallocateIndices(uint32_t numVertices);
-		axmol::TrianglesCommand *addCommand(axmol::Renderer *renderer, float globalOrder, axmol::Texture2D *texture, axmol::rhi::ProgramState *programState, axmol::BlendFunc blendType, const axmol::TrianglesCommand::Triangles &triangles, const axmol::Mat4 &mv, uint32_t flags);
-
-		axmol::rhi::ProgramState* updateCommandPipelinePS(SkeletonCommand* command, axmol::rhi::ProgramState* programState);
+		spine::SkeletonData *getSkeletonData() const { return _skeletonData; }
 
 	protected:
-		SkeletonBatch();
-		virtual ~SkeletonBatch();
+		SkeletonAsset(std::string_view dataFile,
+					  std::string_view atlasFile,
+					  float scale,
+					  spine::Atlas *atlas,
+					  spine::AttachmentLoader *loader,
+					  spine::SkeletonData *data);
+		~SkeletonAsset() override;
 
-		void reset();
-
-		SkeletonCommand* nextFreeCommand ();
-
-		SkeletonCommand* newCommand();
-
-		ax::rhi::ProgramState*                     _programState; // The default program state
-
-		// pool of commands
-		std::vector<SkeletonCommand *> _commandsPool;
-		uint32_t _nextFreeCommand;
-
-		// pool of vertices
-		std::vector<axmol::V3F_T2F_C4B> _vertices;
-		uint32_t _numVertices;
-
-		// pool of indices
-		::spine::Array<unsigned short> _indices;
-
-        ax::EventListener* _afterDrawListener{nullptr};
+		std::string _dataFile;
+		std::string _atlasFile;
+		float _scale{1.0f};
+		spine::Atlas *_atlas{nullptr};
+		spine::AttachmentLoader *_attachmentLoader{nullptr};
+		spine::SkeletonData *_skeletonData{nullptr};
 	};
 
-}// namespace spine
+	class SP_API SkeletonAssetCache {
+	public:
+		static SkeletonAssetCache *getInstance();
+		static void destroyInstance();
 
-#endif// SPINE_SKELETONBATCH_H_
+		SkeletonAssetCache();
+		~SkeletonAssetCache();
+
+		SkeletonAsset *loadAsset(std::string_view dataFile, std::string_view atlasFile, float scale);
+		void unloadAsset(std::string_view dataFile, std::string_view atlasFile, float scale);
+		void unloadAssets(std::string_view dataFile);
+		void unloadAllAssets();
+		void unloadAllUnusedAssets();
+
+	private:
+		uint64_t makeKey(std::string_view dataFile, std::string_view atlasFile, float scale);
+
+		XXH64_state_t *_hashState{nullptr};
+		std::unordered_map<uint64_t, SkeletonAsset *> _cacheEntries;
+
+		static SkeletonAssetCache *_instance;
+	};
+}// namespace spine

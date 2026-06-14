@@ -36,6 +36,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <string_view> // Axmol-spec
+
 namespace spine {
 	class SP_API String : public SpineObject {
 	public:
@@ -55,6 +57,21 @@ namespace spine {
 				} else {
 					_buffer = (char *) chars;
 				}
+			}
+		}
+
+		/// Axmol-spec: Unsafe constructor for String.
+		/// This overload avoids unnecessary strlen calls and memory copies by directly
+		/// referencing the provided std::string_view buffer. The caller must ensure
+		/// the lifetime of the input string_view outlives this String instance.
+        [[unsafe]] explicit String(std::string_view sv) {
+			_tempowner = false;
+			if (sv.empty()) {
+				_length = 0;
+				_buffer = NULL;
+			} else {
+				_length = sv.length();
+                _buffer = const_cast<char*>(sv.data());
 			}
 		}
 

@@ -35,7 +35,7 @@ using namespace spine;
 
 RTTI_IMPL(Bone, Update)
 
-bool Bone::yDown = false;
+bool Bone::yDown = true;
 
 Bone::Bone(BoneData &data, Bone *parent)
 	: PosedGeneric<BoneData, BonePose, BonePose>(data), PosedActive(), _parent(parent), _children(), _sorted(false) {

@@ -34,7 +34,11 @@
 
 namespace spine {
 	/// Takes a linear value in the range 0-1 and outputs a usually non-linear, interpolated value.
-	class SP_API Interpolation : public SpineObject {
+	/// Axmol-spec: Interpolation uses function-local static singleton instances. It must not inherit
+	/// SpineObject, because SpineObject's destructor calls SpineExtension::beforeFree(). Those static
+	/// instances may be destroyed after AxmolSpineExtension has already been released during Director
+	/// shutdown, which can access a stale extension instance and crash on application exit.
+	class SP_API Interpolation/* : public SpineObject*/ {
 	public:
 		virtual ~Interpolation();
 
