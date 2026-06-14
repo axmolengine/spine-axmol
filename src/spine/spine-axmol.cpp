@@ -104,7 +104,7 @@ AxmolTextureLoader* AxmolTextureLoader::getInstance()
 
         auto callback = [](ax::CustomEvent*) { AxmolTextureLoader::destroyInstance(); };
         s_textureLoaderEvent = ax::Director::getInstance()->getEventDispatcher()->addCustomEventListener(
-            ax::Director::EVENT_DESTROY, callback, TEXTURE_LOADER_DTOR_PRIORITY);
+            ax::Director::EVENT_DISPOSING, callback, TEXTURE_LOADER_DTOR_PRIORITY);
     }
     return s_textureLoader;
 }
@@ -153,7 +153,7 @@ AxmolExtension* AxmolExtension::getInstance()
 
         auto callback = [](ax::CustomEvent*) { AxmolExtension::destroyInstance(); };
         s_axmolSpineExtensionEvent = ax::Director::getInstance()->getEventDispatcher()->addCustomEventListener(
-            ax::Director::EVENT_DESTROY, callback,
+            ax::Director::EVENT_DISPOSING, callback,
                                                                                   SPINE_EXTENSION_DTOR_PRIORITY);
     }
     return s_axmolSpineExtension;

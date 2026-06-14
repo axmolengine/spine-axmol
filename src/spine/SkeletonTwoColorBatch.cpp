@@ -188,7 +188,7 @@ namespace spine {
         _event1 = eventDispatcher->addCustomEventListener(Director::EVENT_AFTER_DRAW,
                                                 [](CustomEvent*) { s_TwoColorInstance->update(0); });
 
-        _event2 = eventDispatcher->addCustomEventListener(Director::EVENT_DESTROY,
+        _event2 = eventDispatcher->addCustomEventListener(Director::EVENT_DISPOSING,
                                                 [](CustomEvent*) { SkeletonTwoColorBatch::destroyInstance(); });
 	}
 
