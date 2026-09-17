@@ -3,7 +3,7 @@
  * Last updated April 5, 2025. Replaces all prior versions.
  * 
  * Copyright (c) 2013-2025, Esoteric Software LLC
- * Copyright (c) 2019-present Axmol Engine contributors (see AUTHORS.md).
+ * Copyright (c) 2019-present Simdsoft Limited.
  *
  * https://axmol.dev/
  *
@@ -35,10 +35,11 @@
 
 #include "axmol/base/Types.h"
 #include "axmol/base/Utils.h"
+#include "axmol/scene/Camera.h"
 #include <algorithm>
 #include <stddef.h>// offsetof
 
-#include "axmol/rhi/DriverContext.h"
+#include "axmol/rhi/GraphicsCore.h"
 #include "axmol/renderer/Shaders.h"
 #include "axmol/base/Director.h"
 #include "axmol/base/EventDispatcher.h"
@@ -61,9 +62,10 @@ namespace spine {
 										BlendFunc blendType,
 										const TwoColorTriangles &triangles,
 										const Mat4 &mv,
-										uint32_t flags) {
+										uint32_t flags,
+										const axmol::SceneViewData &view) {
 
-		ax::RenderCommand::init(globalOrder, mv, flags);
+		ax::RenderCommand::init(globalOrder, mv, flags, view);
 
 		_triangles = triangles;
 		if (_triangles.indexCount % 3 != 0) {
@@ -162,20 +164,20 @@ namespace spine {
 		_locPMatrix = _twoColorProgramState->getUniformLocation("u_PMatrix");
 		_locTexture = _twoColorProgramState->getUniformLocation("u_tex0");
 
-		auto locPosition = _twoColorProgramState->getVertexInputDesc("a_position");
-		auto locTexcoord = _twoColorProgramState->getVertexInputDesc("a_texCoord");
-		auto locColor = _twoColorProgramState->getVertexInputDesc("a_color");
-		auto locColor2 = _twoColorProgramState->getVertexInputDesc("a_color2");
+		auto locPosition = _twoColorProgramState->getVertexInputDesc(rhi::VertexSemantic::POSITION);
+		auto locTexcoord = _twoColorProgramState->getVertexInputDesc(rhi::VertexSemantic::TEXCOORD0);
+		auto locColor = _twoColorProgramState->getVertexInputDesc(rhi::VertexSemantic::COLOR0);
+		auto locColor2 = _twoColorProgramState->getVertexInputDesc(rhi::VertexSemantic::COLOR1);
 
 		auto layoutDesc = axvlm->allocateVertexLayoutDesc();
 		layoutDesc.startLayout(4);
-		layoutDesc.addAttrib("a_position", locPosition, rhi::VertexFormat::FLOAT3,
+		layoutDesc.addAttrib(locPosition, rhi::VertexElementType::FLOAT3,
 							 offsetof(spine::V3F_C4B_C4B_T2F, position), false);
-		layoutDesc.addAttrib("a_color", locColor, rhi::VertexFormat::UBYTE4,
+		layoutDesc.addAttrib(locColor, rhi::VertexElementType::UBYTE4,
 							 offsetof(spine::V3F_C4B_C4B_T2F, color), true);
-		layoutDesc.addAttrib("a_color2", locColor2, rhi::VertexFormat::UBYTE4,
+		layoutDesc.addAttrib(locColor2, rhi::VertexElementType::UBYTE4,
 							 offsetof(spine::V3F_C4B_C4B_T2F, color2), true);
-		layoutDesc.addAttrib("a_texCoord", locTexcoord, rhi::VertexFormat::FLOAT2,
+		layoutDesc.addAttrib(locTexcoord, rhi::VertexElementType::FLOAT2,
 							 offsetof(spine::V3F_C4B_C4B_T2F, texCoord), false);
 		layoutDesc.endLayout();
 
@@ -259,7 +261,7 @@ namespace spine {
 		_indices.setSize(_indices.size() - numIndices, 0);
 	}
 
-	TwoColorTrianglesCommand *SkeletonTwoColorBatch::addCommand(axmol::Renderer *renderer, float globalOrder, axmol::Texture2D *texture, rhi::ProgramState *programState, axmol::BlendFunc blendType, const TwoColorTriangles &triangles, const axmol::Mat4 &mv, uint32_t flags) {
+	TwoColorTrianglesCommand *SkeletonTwoColorBatch::addCommand(const axmol::SceneRenderState &state, float globalOrder, axmol::Texture2D *texture, rhi::ProgramState *programState, axmol::BlendFunc blendType, const TwoColorTriangles &triangles, const axmol::Mat4 &mv, uint32_t flags) {
 		TwoColorTrianglesCommand *command = nextFreeCommand();
 
 		auto pipelinePS = command->unsafePS();
@@ -273,20 +275,19 @@ namespace spine {
 
 		AXASSERT(pipelinePS, "programState should not be null");
 
-		const axmol::Mat4 &projectionMat =
-				Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+		const axmol::Mat4 &projectionMat = state.getViewProjectionMatrix();
 
 		auto finalMatrix = projectionMat * mv;
 
 		pipelinePS->setUniform(_locPMatrix, finalMatrix.m, sizeof(finalMatrix.m));
 		pipelinePS->setTexture(_locTexture, 0, texture->getRHITexture());
 
-		command->init(globalOrder, texture, pipelinePS, blendType, triangles, mv, flags);
+		command->init(globalOrder, texture, pipelinePS, blendType, triangles, mv, flags, state.getView());
 
 		command->setOwnPSVL(pipelinePS, _twoColorVertexLayout, ax::RenderCommand::ADOPT_FLAG_PS);
 
-		command->updateVertexAndIndexBuffer(renderer, triangles.verts, triangles.vertCount, triangles.indices, triangles.indexCount);
-		renderer->addCommand(command);
+		command->updateVertexAndIndexBuffer(state.getRenderer(), triangles.verts, triangles.vertCount, triangles.indices, triangles.indexCount);
+		state.getRenderer()->addCommand(command);
 		return command;
 	}
 

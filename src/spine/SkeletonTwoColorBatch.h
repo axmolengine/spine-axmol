@@ -3,7 +3,7 @@
  * Last updated April 5, 2025. Replaces all prior versions.
  *
  * Copyright (c) 2013-2025, Esoteric Software LLC
- * Copyright (c) 2019-present Axmol Engine contributors (see AUTHORS.md).
+ * Copyright (c) 2019-present Simdsoft Limited.
  *
  * https://axmol.dev/
  *
@@ -33,12 +33,17 @@
 #pragma once
 
 #include "axmol/rhi/ProgramState.h"
+#include "axmol/renderer/CustomCommand.h"
 #include "axmol/renderer/TrianglesCommand.h"
 #include "axmol/renderer/Renderer.h"
 #include "axmol/renderer/Texture2D.h"
 #include "axmol/rhi/VertexLayout.h"
 #include <spine/spine.h>
 #include <vector>
+
+namespace ax {
+	struct SceneRenderState;
+}
 
 namespace spine {
 	struct V3F_C4B_C4B_T2F {
@@ -61,7 +66,7 @@ namespace spine {
 
 		~TwoColorTrianglesCommand();
 
-		void init(float globalOrder, axmol::Texture2D *texture, axmol::rhi::ProgramState *programState, axmol::BlendFunc blendType, const TwoColorTriangles &triangles, const axmol::Mat4 &mv, uint32_t flags);
+		void init(float globalOrder, axmol::Texture2D *texture, axmol::rhi::ProgramState *programState, axmol::BlendFunc blendType, const TwoColorTriangles &triangles, const axmol::Mat4 &mv, uint32_t flags, const axmol::SceneViewData &view);
 
 		void updateCommandPipelineDescriptor(axmol::rhi::ProgramState *programState);
 
@@ -117,7 +122,7 @@ namespace spine {
 		unsigned short *allocateIndices(uint32_t numIndices);
 		void deallocateIndices(uint32_t numIndices);
 
-		TwoColorTrianglesCommand *addCommand(axmol::Renderer *renderer, float globalOrder, axmol::Texture2D *texture, axmol::rhi::ProgramState *programState, axmol::BlendFunc blendType, const TwoColorTriangles &triangles, const axmol::Mat4 &mv, uint32_t flags);
+		TwoColorTrianglesCommand *addCommand(const axmol::SceneRenderState &state, float globalOrder, axmol::Texture2D *texture, axmol::rhi::ProgramState *programState, axmol::BlendFunc blendType, const TwoColorTriangles &triangles, const axmol::Mat4 &mv, uint32_t flags);
 
 		void batch(axmol::Renderer *renderer, TwoColorTrianglesCommand *command);
 

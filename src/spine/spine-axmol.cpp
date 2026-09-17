@@ -3,7 +3,7 @@
  * Last updated April 5, 2025. Replaces all prior versions.
  *
  * Copyright (c) 2013-2025, Esoteric Software LLC
- * Copyright (c) 2019-present Axmol Engine contributors (see AUTHORS.md).
+ * Copyright (c) 2019-present Simdsoft Limited.
  *
  * https://axmol.dev/
  *
@@ -109,8 +109,8 @@ namespace spine {
 				texture->setTexParameters(texParams);
 
 				page.texture = texture;
-				page.width = texture->getPixelsWide();
-				page.height = texture->getPixelsHigh();
+				page.width = texture->getWidth();
+				page.height = texture->getHeight();
 			}
 		}
 		void unload(void *texture) override {
