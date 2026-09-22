@@ -20,7 +20,7 @@ For **Axmol v2**, please visit: [spine-axmol2](https://github.com/axmolengine/sp
 ---
 
 ## 🔗 References
-- [Axmol Engine](https://github.com/axmolengine/axmol)  
+- [Axmol](https://github.com/axmolengine/axmol)  
 - [Spine Runtimes](https://github.com/EsotericSoftware/spine-runtimes)
 
 ---
